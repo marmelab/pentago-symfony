@@ -13,13 +13,13 @@
 
 <form action="{{action}}" method="POST" class="game-container">
 
-    {% if turn_status == 'add_marble' %}
+    {% if turnStatus == 'add_marble' %}
     <h3>Please add a marble</h3>
     {% else %}
     <h3>Please turn a quarter</h3>
     {% endif %}
 
-    {% if turn_status == 'rotate_quarter' %}
+    {% if turnStatus == 'rotate_quarter' %}
 
     <div class="rotate-controls">
         <button type=" submit" name="rotation-key" value="0">
@@ -51,13 +51,13 @@
     {% for row in board %}
     <div class="row">
         {% for value in row %}
-        <button type="submit" name="position" {% if turn_status !='add_marble' %} disabled="disabled" {% endif %}
+        <button type="submit" name="position" {% if turnStatus !='add_marble' %} disabled="disabled" {% endif %}
             value="{{loop.parent.loop.index}}-{{loop.index}}" class="cell cell__value--{{value}}">{{value}}</button>
         {% endfor %}
     </div>
     {% endfor %}
 
-    {% if turn_status == 'rotate_quarter' %}
+    {% if turnStatus == 'rotate_quarter' %}
     <div class="rotate-controls">
         <button type="submit" name="rotation-key" value="6">
             <img class="icon icon--inversed" src="{{ asset('svg/rotate.svg') }}"

@@ -21,7 +21,7 @@ class GameService
     {
         return array(
             "board" => $this->boardService->initBoard(),
-            "turn_status" => self::ADD_MARBLE_STATUS
+            "turnStatus" => self::ADD_MARBLE_STATUS
         );
     }
 
@@ -38,7 +38,7 @@ class GameService
             $game["board"] = $board;
 
             // Change step to rotation quarter
-            $game["turn_status"] = self::ROTATE_QUARTER_STATUS;
+            $game["turnStatus"] = self::ROTATE_QUARTER_STATUS;
         }
 
         return $game;
@@ -96,7 +96,7 @@ class GameService
         $game["board"] = $this->boardService->setQuarterOnBoard($board, $quarter);
 
         // Change step to add marble.
-        $game["turn_status"] = self::ADD_MARBLE_STATUS;
+        $game["turnStatus"] = self::ADD_MARBLE_STATUS;
 
         return $game;
     }

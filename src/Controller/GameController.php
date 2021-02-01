@@ -54,13 +54,13 @@ class GameController extends AbstractController
 
         $game = $this->session->get($playerHash);
 
-        $action = $game["turn_status"] === GameService::ADD_MARBLE_STATUS ?
+        $action = $game["turnStatus"] === GameService::ADD_MARBLE_STATUS ?
             $this->generateUrl('addMarble') :
             $this->generateUrl('rotateQuarter');
 
         return $this->render('game/index.html.twig', [
             'board' => $game["board"],
-            'turn_status' => $game["turn_status"],
+            'turnStatus' => $game["turnStatus"],
             'action' =>  $action,
             'method' => 'POST',
         ]);

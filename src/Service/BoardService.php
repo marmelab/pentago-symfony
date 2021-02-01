@@ -52,14 +52,14 @@ class BoardService
         */
         switch ($key) {
             case 1:
-                return array("start_row" => 0, "start_column" => self::HALF_BOARD_LENGTH);
+                return array("startRow" => 0, "startColumn" => self::HALF_BOARD_LENGTH);
             case 2:
-                return array("start_row" => self::HALF_BOARD_LENGTH, "start_column" => self::HALF_BOARD_LENGTH);
+                return array("startRow" => self::HALF_BOARD_LENGTH, "startColumn" => self::HALF_BOARD_LENGTH);
             case 3:
-                return array("start_row" => self::HALF_BOARD_LENGTH, "start_column" => 0);
+                return array("startRow" => self::HALF_BOARD_LENGTH, "startColumn" => 0);
             case 0:
             default:
-                return array("start_row" => 0, "start_column" => 0);
+                return array("startRow" => 0, "startColumn" => 0);
         }
     }
 
@@ -74,13 +74,13 @@ class BoardService
         );
 
         // Get only 3 rows we need for ou quarter
-        $rows = array_splice($board, $boundaries["start_row"], self::HALF_BOARD_LENGTH);
+        $rows = array_splice($board, $boundaries["startRow"], self::HALF_BOARD_LENGTH);
 
         // Loop over theses 3 rows an extract only 3 columns we need in our quarter
         foreach ($rows as $row) {
-            $row_spliced = array_splice($row, $boundaries["start_column"], self::HALF_BOARD_LENGTH);
+            $rowSpliced = array_splice($row, $boundaries["startColumn"], self::HALF_BOARD_LENGTH);
             // Push each spliced rows in the quarter.
-            $quarter["matrix"][] = $row_spliced;
+            $quarter["matrix"][] = $rowSpliced;
         }
 
         return $quarter;
@@ -93,18 +93,18 @@ class BoardService
             return the updated board
         */
 
-        $start_row = $quarter["boundaries"]["start_row"];
-        $start_column = $quarter["boundaries"]["start_column"];
+        $startRow = $quarter["boundaries"]["startRow"];
+        $startColumn = $quarter["boundaries"]["startColumn"];
 
 
-        foreach ($quarter["matrix"] as $index => $quarter_row) {
-            $current_row = $start_row + $index;
+        foreach ($quarter["matrix"] as $index => $quarterRow) {
+            $currentRow = $startRow + $index;
 
             array_splice(
-                $board[$current_row], // Get current row
-                $start_column, // From the start column
+                $board[$currentRow], // Get current row
+                $startColumn, // From the start column
                 self::HALF_BOARD_LENGTH, // Remove 3 items
-                $quarter_row // ...and replace them by the quarter row
+                $quarterRow // ...and replace them by the quarter row
             );
         }
         return $board;
