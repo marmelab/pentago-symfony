@@ -1,0 +1,10 @@
+version: '3.3'
+
+services:
+  symfony:
+    build: docker/symfony
+    volumes:
+      - .:/app
+    command: '/usr/local/bin/symfony server:start --port 8080'
+    ports:
+      - 8080:8080
