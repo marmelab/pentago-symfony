@@ -1,32 +1,82 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello GameController!{% endblock %}
+{% block title %}Hello GameController!
+{% endblock %}
 
 {% block stylesheets %}
-    {{ parent() }}
+{{ parent() }}
 
-    <link href="{{ asset('css/game.css') }}" rel="stylesheet"/>
+<link href="{{ asset('css/game.css') }}" rel="stylesheet" />
 {% endblock %}
 
 {% block body %}
 
 <form action="{{action}}" method="POST" class="game-container">
+    {% if turn_status == 'add_marble' %}
+    <h2>Please add a marble</h2>
+    {% else %}
+    <h2>Please turn a quarter</h2>
+    {% endif %}
+
+    {% if turn_status == 'rotate_quarter' %}
+
+    <div class="rotate-controls">
+        <button type=" submit" name="rotation-key" value="0">
+            <img class="icon icon--inversed" src="{{ asset('svg/rotate.svg') }}" alt="clockwise rotation icon" />
+            Quarter 1
+        </button>
+        <button type="submit" name="rotation-key" value="1">
+            <img class="icon icon" src="{{ asset('svg/rotate.svg') }}" alt="counter-clockwise rotation icon" />
+            Quarter 1
+        </button>
+        <button type=" submit" name="rotation-key" value="2">
+            <img class="icon icon--inversed" src="{{ asset('svg/rotate.svg') }}" alt="clockwise rotation icon" />
+            Quarter 2
+        </button>
+        <button type="submit" name="rotation-key" value="3">
+            <img class="icon icon" src="{{ asset('svg/rotate.svg') }}" alt="counter-clockwise rotation icon" />
+            Quarter 2
+        </button>
+    </div>
+    {% endif %}
+
+    {#
+    Each cell has a couple of coords as value : "row-column" (e.g : "O-5")
+    Twig inject in loops an object "loop".
+    loop.index is the iterator (start 1 to 6).
+    loop.parent be able to access to the first loop object.
+    #}
+
     {% for row in board %}
-        <div class="row">
+    <div class="row">
         {% for value in row %}
-        {#
-            Each cell has a couple of coords as value : "row-column" (e.g : "O-5")
-            Twig inject in loops an object "loop".
-            loop.index is the iterator (start 1 to 6).
-            loop.parent be able to access to the first loop object.
-        #}
-            <button
-                type="submit"
-                name="position"
-                value="{{loop.parent.loop.index}}-{{loop.index}}"
-                class="cell cell__value--{{value}}">{{value}}</button>
+        <button type="submit" name="position" {% if turn_status !='add_marble' %} disabled="disabled" {% endif %}
+            value="{{loop.parent.loop.index}}-{{loop.index}}" class="cell cell__value--{{value}}">{{value}}</button>
         {% endfor %}
-        </div>
+    </div>
     {% endfor %}
+
+    {% if turn_status == 'rotate_quarter' %}
+    <div class="rotate-controls">
+        <button type="submit" name="rotation-key" value="6">
+            <img class="icon icon--inversed" src="{{ asset('svg/rotate.svg') }}"
+                alt="counter-clockwise rotation icon" />
+            Quarter 4
+        </button>
+        <button type=" submit" name="rotation-key" value="7">
+            <img class="icon" src="{{ asset('svg/rotate.svg') }}" alt="clockwise rotation icon" />
+            Quarter 4
+        </button>
+        <button type="submit" name="rotation-key" value="4">
+            <img class="icon icon--inversed" src="{{ asset('svg/rotate.svg') }}"
+                alt="counter-clockwise rotation icon" />
+            Quarter 3
+        </button>
+        <button type=" submit" name="rotation-key" value="5">
+            <img class="icon" src="{{ asset('svg/rotate.svg') }}" alt="clockwise rotation icon" />
+            Quarter 3
+        </button>
+    </div>
+    {% endif %}
 </form>
 {% endblock %}
