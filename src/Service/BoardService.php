@@ -11,13 +11,13 @@ class BoardService
     public function initBoard(): array
     {
         // Return a 6*6 2 dimensions array filled with 0 as value for each cell.
-        return array_fill(0, $this->BOARD_LENGTH, array_fill(0, $this->BOARD_LENGTH, 0));
+        return array_fill(0, self::BOARD_LENGTH, array_fill(0, self::BOARD_LENGTH, 0));
     }
 
 
     private function isOutsideBoard($position): bool
     {
-        if ($position[0] < 0 || $position[0] >= $this->BOARD_LENGTH || $position[1] < 0 || $position[1] >= $this->BOARD_LENGTH) {
+        if ($position[0] < 0 || $position[0] >= self::BOARD_LENGTH || $position[1] < 0 || $position[1] >= self::BOARD_LENGTH) {
             return true;
         }
 
