@@ -1,4 +1,4 @@
-# pentago-python
+# pentago-symfony
 
 [Pentago](https://en.wikipedia.org/wiki/Pentago) game implementation in **Symfony 5**.
 
