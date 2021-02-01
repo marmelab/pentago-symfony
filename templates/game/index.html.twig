@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello GameController!{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link href="{{ asset('css/game.css') }}" rel="stylesheet"/>
+{% endblock %}
+
+{% block body %}
+
+<form action="{{action}}" method="POST" class="game-container">
+    {% for row in board %}
+        <div class="row">
+        {% for value in row %}
+        {#
+            Each cell has a couple of coords as value : "row-column" (e.g : "O-5")
+            Twig inject in loops an object "loop".
+            loop.index is the iterator (start 1 to 6).
+            loop.parent be able to access to the first loop object.
+        #}
+            <button
+                type="submit"
+                name="position"
+                value="{{loop.parent.loop.index}}-{{loop.index}}"
+                class="cell cell__value--{{value}}">{{value}}</button>
+        {% endfor %}
+        </div>
+    {% endfor %}
+</form>
+{% endblock %}
