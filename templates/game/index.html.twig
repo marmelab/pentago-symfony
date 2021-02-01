@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello GameController!{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link href="{{ asset('css/game.css') }}" rel="stylesheet"/>
+{% endblock %}
+
+{% block body %}
+
+<form action="{{action}}" method="POST" class="game-container">
+    {% for row in board %}
+        <div class="row">
+        {% for value in row %}
+            <button
+                type="submit"
+                name="position"
+                value="{{loop.parent.loop.index}}-{{loop.index}}"
+                class="cell cell__value--{{value}}">{{value}}</button>
+        {% endfor %}
+        </div>
+    {% endfor %}
+</form>
+{% endblock %}
