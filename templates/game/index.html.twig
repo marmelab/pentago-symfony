@@ -1,83 +1,86 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello GameController!
+{% block title %}Play to Pentago !
 {% endblock %}
 
 {% block stylesheets %}
-{{ parent() }}
+	{{ parent() }}
 
-<link href="{{ asset('css/game.css') }}" rel="stylesheet" />
+	<link href="{{ asset('css/game.css') }}" rel="stylesheet"/>
 {% endblock %}
 
 {% block body %}
 
 <form action="{{action}}" method="POST" class="game-container">
+        {% if currentPlayer == 1 %}
+            <h2 class="player-color--1">Player 1, this is your turn !</h2>
+        {% else %}
+            <h2 class="player-color--2">Player 2, this is your turn !</h2>
+        {% endif %}
 
-    {% if turnStatus == 'add_marble' %}
-    <h3>Please add a marble</h3>
-    {% else %}
-    <h3>Please turn a quarter</h3>
-    {% endif %}
+		{% if turnStatus == constant('App\\Service\\GameService::ADD_MARBLE_STATUS') %}
+			<h3>Please add a marble</h3>
+		{% else %}
+			<h3>Please turn a quarter</h3>
+		{% endif %}
 
-    {% if turnStatus == 'rotate_quarter' %}
+		{% if turnStatus == constant('App\\Service\\GameService::ROTATE_QUARTER_STATUS') %}
 
-    <div class="rotate-controls">
-        <button type=" submit" name="rotation-key" value="0">
-            <img class="icon icon--inversed" src="{{ asset('svg/rotate.svg') }}" alt="clockwise rotation icon" />
-            Quarter 1
-        </button>
-        <button type="submit" name="rotation-key" value="1">
-            <img class="icon icon" src="{{ asset('svg/rotate.svg') }}" alt="counter-clockwise rotation icon" />
-            Quarter 1
-        </button>
-        <button type=" submit" name="rotation-key" value="2">
-            <img class="icon icon--inversed" src="{{ asset('svg/rotate.svg') }}" alt="clockwise rotation icon" />
-            Quarter 2
-        </button>
-        <button type="submit" name="rotation-key" value="3">
-            <img class="icon icon" src="{{ asset('svg/rotate.svg') }}" alt="counter-clockwise rotation icon" />
-            Quarter 2
-        </button>
-    </div>
-    {% endif %}
+			<div class="rotate-controls">
+				<button type=" submit" name="rotation-key" value="0">
+					<img class="icon icon--inversed" src="{{ asset('svg/rotate.svg') }}" alt="clockwise rotation icon"/>
+					Quarter 1
+				</button>
+				<button type="submit" name="rotation-key" value="1">
+					<img class="icon icon" src="{{ asset('svg/rotate.svg') }}" alt="counter-clockwise rotation icon"/>
+					Quarter 1
+				</button>
+				<button type=" submit" name="rotation-key" value="2">
+					<img class="icon icon--inversed" src="{{ asset('svg/rotate.svg') }}" alt="clockwise rotation icon"/>
+					Quarter 2
+				</button>
+				<button type="submit" name="rotation-key" value="3">
+					<img class="icon icon" src="{{ asset('svg/rotate.svg') }}" alt="counter-clockwise rotation icon"/>
+					Quarter 2
+				</button>
+			</div>
+		{% endif %}
 
-    {#
-    Each cell has a couple of coords as value : "row-column" (e.g : "O-5")
-    Twig inject in loops an object "loop".
-    loop.index is the iterator (start 1 to 6).
-    loop.parent be able to access to the first loop object.
-    #}
+		{# Each cell has a couple of coords as value : "row-column" (e.g : "O-5")
+        Twig inject in loops an object "loop".
+        loop.index is the iterator (start 1 to 6).
+        loop.parent be able to access to the first loop object.
+        #}
 
-    {% for row in board %}
-    <div class="row">
-        {% for value in row %}
-        <button type="submit" name="position" {% if turnStatus !='add_marble' %} disabled="disabled" {% endif %}
-            value="{{loop.parent.loop.index}}-{{loop.index}}" class="cell cell__value--{{value}}">{{value}}</button>
-        {% endfor %}
-    </div>
-    {% endfor %}
+        <div class="board">
+            {% for row in board %}
+                <div class="row">
+                    {% for value in row %}
+                        <button type="submit" name="position" {% if turnStatus != constant('App\\Service\\GameService::ADD_MARBLE_STATUS') %} disabled="disabled" {% endif %} value="{{loop.parent.loop.index}}-{{loop.index}}" class="cell player-bg--{{value}}"></button>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
 
-    {% if turnStatus == 'rotate_quarter' %}
-    <div class="rotate-controls">
-        <button type="submit" name="rotation-key" value="6">
-            <img class="icon icon--inversed" src="{{ asset('svg/rotate.svg') }}"
-                alt="counter-clockwise rotation icon" />
-            Quarter 4
-        </button>
-        <button type=" submit" name="rotation-key" value="7">
-            <img class="icon" src="{{ asset('svg/rotate.svg') }}" alt="clockwise rotation icon" />
-            Quarter 4
-        </button>
-        <button type="submit" name="rotation-key" value="4">
-            <img class="icon icon--inversed" src="{{ asset('svg/rotate.svg') }}"
-                alt="counter-clockwise rotation icon" />
-            Quarter 3
-        </button>
-        <button type=" submit" name="rotation-key" value="5">
-            <img class="icon" src="{{ asset('svg/rotate.svg') }}" alt="clockwise rotation icon" />
-            Quarter 3
-        </button>
-    </div>
-    {% endif %}
-</form>
+		{% if turnStatus == constant('App\\Service\\GameService::ROTATE_QUARTER_STATUS') %}
+			<div class="rotate-controls">
+				<button type="submit" name="rotation-key" value="6">
+					<img class="icon icon--inversed" src="{{ asset('svg/rotate.svg') }}" alt="counter-clockwise rotation icon"/>
+					Quarter 4
+				</button>
+				<button type=" submit" name="rotation-key" value="7">
+					<img class="icon" src="{{ asset('svg/rotate.svg') }}" alt="clockwise rotation icon"/>
+					Quarter 4
+				</button>
+				<button type="submit" name="rotation-key" value="4">
+					<img class="icon icon--inversed" src="{{ asset('svg/rotate.svg') }}" alt="counter-clockwise rotation icon"/>
+					Quarter 3
+				</button>
+				<button type=" submit" name="rotation-key" value="5">
+					<img class="icon" src="{{ asset('svg/rotate.svg') }}" alt="clockwise rotation icon"/>
+					Quarter 3
+				</button>
+			</div>
+		{% endif %}
+	</form>
 {% endblock %}

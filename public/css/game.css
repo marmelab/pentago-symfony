@@ -1,47 +1,66 @@
 .game-container {
-    padding-top: 120px;
+  padding-top: 120px;
 }
 
 .row {
-    width: 420px;
-    margin: auto;
-    display: flex;
-    align-items: center
+  width: 420px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+}
+.row:first-child > .cell {
+  border-top: 1px solid;
 }
 
-.row:first-child > .cell {
-    border-top: 1px solid;
+.row:nth-child(3) > .cell {
+  border-bottom-width: 3px;
 }
 
 .cell {
-    width: 70px;
-    height: 70px;
-    flex: 1;
-    border: none; /* Resetting default browser borders */
-    border-right: 1px solid;
-    border-bottom: 1px solid;
-    border-color: var(--main-bg-color);
-    cursor: pointer;
-    background-color: white;
-    outline: none;
+  width: 70px;
+  height: 70px;
+  flex: 1;
+  border: none; /* Resetting default browser borders */
+  border-right: 1px solid;
+  border-bottom: 1px solid;
+  border-color: var(--main-bg-color);
+  cursor: pointer;
+  background-color: white;
+  outline: none;
 }
 
 .cell:first-child {
-    border-left: 1px solid;
+  border-left: 1px solid;
 }
 
-.cell__value--1 {
-    background-color: var(--player1-color); 
+.cell:nth-child(3) {
+  border-right-width: 3px;
+}
+
+.player-color--1 {
+  color: var(--player1-color);
+}
+
+.player-bg--1 {
+  background-color: var(--player1-color);
+}
+
+.player-color--2 {
+  color: var(--player2-color);
+}
+
+.player-bg--2 {
+  background-color: var(--player2-color);
 }
 
 .rotate-controls {
-    display: flex;
-    width: 420px;
-    margin: auto;
-    justify-content: space-around;
-    padding: 20px 0;
+  display: flex;
+  width: 420px;
+  margin: auto;
+  justify-content: space-around;
+  padding: 20px 0;
 }
 
 .icon--inversed {
-    transform: rotateY(180deg);
+  transform: rotateY(180deg);
 }

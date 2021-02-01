@@ -21,18 +21,24 @@ class GameService
     {
         return array(
             "board" => $this->boardService->initBoard(),
-            "turnStatus" => self::ADD_MARBLE_STATUS
+            "turnStatus" => self::ADD_MARBLE_STATUS,
+            "currentPlayer" => 1
         );
+    }
+
+    public function changeCurrentPlayer(int $currentPlayer): int
+    {
+        return $currentPlayer === 1 ? 2 : 1;
     }
 
 
 
-    public function addMarbleIfPositionIsValid(array $game, array $position): array
+    public function addMarbleIfPositionIsValid(array $game, array $position, int $value): array
     {
         $board = $game["board"];
 
         if ($this->boardService->isPositionAvailable($board, $position) === true) {
-            $board = $this->boardService->addMarble($board, $position);
+            $board = $this->boardService->addMarble($board, $position, $value);
 
             // Update board in the game with the new one.
             $game["board"] = $board;
@@ -97,6 +103,9 @@ class GameService
 
         // Change step to add marble.
         $game["turnStatus"] = self::ADD_MARBLE_STATUS;
+
+        // Player has finished his turn
+        $game["currentPlayer"] = $this->changeCurrentPlayer($game["currentPlayer"]);
 
         return $game;
     }

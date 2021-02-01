@@ -1,20 +1,24 @@
 :root {
-    --main-bg-color:#264653;
-    --player1-color: #E9C46A
+  --main-bg-color: #264653;
+  --player1-color: #e9c46a;
+  --player2-color: #e76f51;
 }
-  
 
-html, body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Arial';
-    color: white;
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Arial";
+  color: white;
 }
 
 body {
-    background-color: var(--main-bg-color);
+  background-color: var(--main-bg-color);
 }
 
-h1, h2, h3, h4 {
-    text-align: center;
+h1,
+h2,
+h3,
+h4 {
+  text-align: center;
 }

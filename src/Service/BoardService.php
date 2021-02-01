@@ -38,9 +38,9 @@ class BoardService
         return true;
     }
 
-    public function addMarble($board, $position): array
+    public function addMarble(array $board, array $position, int $value): array
     {
-        $board[$position[0]][$position[1]] = 1;
+        $board[$position[0]][$position[1]] = $value;
 
         return $board;
     }
