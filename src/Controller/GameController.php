@@ -18,7 +18,8 @@ class GameController extends AbstractController
     private BoardService $boardService;
     private SessionInterface $session;
 
-    public function __construct(BoardService $boardService, SessionInterface $session) {
+    public function __construct(BoardService $boardService, SessionInterface $session)
+    {
         $this->boardService = $boardService;
         $this->session = $session;
     }
@@ -27,10 +28,10 @@ class GameController extends AbstractController
      * @Route("/", name="newGame")
      */
     public function newGame(): Response
-    {   
+    {
         $board = $this->boardService->initBoard();
         $playerHash = $this->generatePlayerHash();
-        
+
         $response = $this->redirectToRoute('game');
 
         $response->headers->setCookie(new Cookie($this::COOKIE_KEY, $playerHash));
@@ -43,7 +44,8 @@ class GameController extends AbstractController
      * @Route("/game", name="game")
      * Used to display the board
      */
-    public function game(Request $request): Response {
+    public function game(Request $request): Response
+    {
 
         $playerHash = $request->cookies->get($this::COOKIE_KEY);
         if (!$playerHash || !$this->session->get($playerHash)) {
@@ -85,7 +87,7 @@ class GameController extends AbstractController
         if ($this->boardService->isPositionAvailable($board, $position) === true) {
             $board = $this->boardService->addMarble($board, $position);
         }
-    
+
         $this->session->set($playerHash, $board);
 
         return $this->redirectToRoute('game');

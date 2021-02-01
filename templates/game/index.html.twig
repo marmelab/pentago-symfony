@@ -14,6 +14,12 @@
     {% for row in board %}
         <div class="row">
         {% for value in row %}
+        {#
+            Each cell has a couple of coords as value : "row-column" (e.g : "O-5")
+            Twig inject in loops an object "loop".
+            loop.index is the iterator (start 1 to 6).
+            loop.parent be able to access to the first loop object.
+        #}
             <button
                 type="submit"
                 name="position"
