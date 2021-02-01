@@ -34,3 +34,14 @@
     background-color: var(--player1-color); 
 }
 
+.rotate-controls {
+    display: flex;
+    width: 420px;
+    margin: auto;
+    justify-content: space-around;
+    padding: 20px 0;
+}
+
+.icon--inversed {
+    transform: rotateY(180deg);
+}
