@@ -12,10 +12,11 @@
 {% block body %}
 
 <form action="{{action}}" method="POST" class="game-container">
+
     {% if turn_status == 'add_marble' %}
-    <h2>Please add a marble</h2>
+    <h3>Please add a marble</h3>
     {% else %}
-    <h2>Please turn a quarter</h2>
+    <h3>Please turn a quarter</h3>
     {% endif %}
 
     {% if turn_status == 'rotate_quarter' %}
