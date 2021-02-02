@@ -61,6 +61,7 @@ class GameController extends AbstractController
         return $this->render('game/index.html.twig', [
             'board' => $game["board"],
             'turnStatus' => $game["turnStatus"],
+            'currentPlayer' => $game["currentPlayer"],
             'action' =>  $action,
             'method' => 'POST',
         ]);
@@ -90,7 +91,7 @@ class GameController extends AbstractController
         $position[0] -= 1;
         $position[1] -= 1;
 
-        $game = $this->gameService->addMarbleIfPositionIsValid($game, $position);
+        $game = $this->gameService->addMarbleIfPositionIsValid($game, $position, $game["currentPlayer"]);
 
         $this->session->set($playerHash, $game);
 
@@ -106,7 +107,7 @@ class GameController extends AbstractController
     {
         $playerHash = $request->cookies->get($this::COOKIE_KEY);
         if (!$playerHash || !$this->session->get($playerHash)) {
-            return $this->redirectToRoute('index');
+            return $this->redirectToRoute('newGame');
         }
 
         $game = $this->session->get($playerHash);
