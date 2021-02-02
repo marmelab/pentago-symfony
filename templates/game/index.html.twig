@@ -12,7 +12,7 @@
 {% block body %}
 
 <form action="{{action}}" method="POST" class="game-container">
-        {% if currentPlayer == 1 %}
+        {% if playerTurn == 1 %}
             <h2 class="player-color--1">Player 1, this is your turn !</h2>
         {% else %}
             <h2 class="player-color--2">Player 2, this is your turn !</h2>

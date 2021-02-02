@@ -6,6 +6,7 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidV4Generator;
 use Doctrine\ORM\Mapping as ORM;
 
 use App\Repository\GameRepository;
+use Symfony\Component\Uid\UuidV4;
 
 /**
  * @ORM\Entity(repositoryClass=GameRepository::class)
@@ -45,7 +46,7 @@ class Game
      */
     private $playerTurn;
 
-    public function getId(): ?int
+    public function getId(): ?UuidV4
     {
         return $this->id;
     }
