@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 use App\Entity\Game;
 use App\Service\GameService;
+use App\Service\PlayerService;
 
 class GameController extends AbstractController
 {
@@ -17,9 +18,10 @@ class GameController extends AbstractController
 
     private GameService $gameService;
 
-    public function __construct(GameService $gameService)
+    public function __construct(GameService $gameService, PlayerService $playerService)
     {
         $this->gameService = $gameService;
+        $this->playerService = $playerService;
     }
 
     /**
@@ -28,9 +30,8 @@ class GameController extends AbstractController
     public function newGame(): Response
     {
         $entityManager = $this->getDoctrine()->getManager();
-        $game = $this->gameService->initGame();
-
-        $playerHash = $this->generatePlayerHash();
+        $playerHash = $this->playerService->generatePlayerHash();
+        $game = $this->gameService->initGame($playerHash);
 
         $entityManager->persist($game);
         $entityManager->flush();
@@ -55,13 +56,21 @@ class GameController extends AbstractController
     {
         $playerHash = $request->cookies->get($this::COOKIE_KEY);
 
+
         $entityManager = $this->getDoctrine()->getManager();
         $game = $entityManager->getRepository(Game::class)->find($id);
-
-
-
-        if (!$playerHash || !$game) {
+        if (!$game) {
             return $this->redirectToRoute('newGame');
+        }
+
+        // If a new player come on this page and game is not started yet... 
+        if (!$playerHash && $game->getStatus() === $this->gameService::GAME_WAITING_OPPONENT) {
+            $playerHash = $this->playerService->generatePlayerHash();
+
+            // We have the second player !
+            $game = $this->gameService->setPlayer2AndStartGame($playerHash, $game);
+
+            $entityManager->flush();
         }
 
 
@@ -69,10 +78,16 @@ class GameController extends AbstractController
             $this->generateUrl('addMarble', ["id" => $game->getId()]) :
             $this->generateUrl('rotateQuarter', ["id" => $game->getId()]);
 
+        // Now we need to get if this user is player1, 2 or if he doesn't play.
+        $yourValue = $this->gameService->getPlayerValue($game, $playerHash);
+
         return $this->render('game/index.html.twig', [
             'board' => $game->getBoard(),
+            'status' => $game->getStatus(),
             'turnStatus' => $game->getTurnStatus(),
-            'playerTurn' => $game->getPlayerTurn(),
+            'isYourTurn' => $game->getCurrentPlayerHash() === $playerHash,
+            'yourValue' => $yourValue,
+            'isWitness' => !$playerHash,
             'action' =>  $action,
             'method' => 'POST',
         ]);
@@ -94,6 +109,14 @@ class GameController extends AbstractController
             return $this->redirectToRoute('newGame');
         }
 
+
+        if (
+            $game->getStatus() === $this->gameService::GAME_WAITING_OPPONENT ||
+            $game->getCurrentPlayerHash() !== $playerHash
+        ) {
+            return $this->redirectToRoute('game', ["id" => $game->getId()]);
+        }
+
         $position = $request->get('position');
 
         // Value are stored like "x-y".
@@ -104,7 +127,7 @@ class GameController extends AbstractController
         $position[0] -= 1;
         $position[1] -= 1;
 
-        $game = $this->gameService->addMarbleIfPositionIsValid($game, $position, $game->getPlayerTurn());
+        $game = $this->gameService->addMarbleIfPositionIsValid($game, $position);
         $entityManager->flush();
 
         return $this->redirectToRoute('game', ["id" => $game->getId()]);
@@ -126,6 +149,12 @@ class GameController extends AbstractController
             return $this->redirectToRoute('newGame');
         }
 
+
+        if ($game->getStatus() === $this->gameService::GAME_WAITING_OPPONENT) {
+            return $this->redirectToRoute('game', ["id" => $game->getId()]);
+        }
+
+
         $rotationKey = $request->get('rotation-key');
 
         $game = $this->gameService->rotateQuarterBy90Degrees($game, $rotationKey);
@@ -133,13 +162,5 @@ class GameController extends AbstractController
         $entityManager->flush();
 
         return $this->redirectToRoute('game', ["id" => $game->getId()]);
-    }
-
-
-
-    // Return a unique hash in order to simulate something like an authentication.
-    protected function generatePlayerHash(): string
-    {
-        return hash('sha256', uniqid(), false);
     }
 }

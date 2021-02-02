@@ -3,6 +3,8 @@
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Pentago !{% endblock %}</title>
+        {% block metas %}{% endblock %}
+
         {% block stylesheets %}
             <link href="{{ asset('css/main.css') }}" rel="stylesheet"/>
         {% endblock %}

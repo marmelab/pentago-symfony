@@ -86,11 +86,11 @@
   background-color: var(--player2-color);
 }
 
-.game-container.player-turn--1 .cell:enabled:hover .marble.player-bg--0 {
+.game-container.current-player--1 .cell:enabled:hover .marble.player-bg--0 {
   background-color: var(--player1-color--hover);
 }
 
-.game-container.player-turn--2 .cell:enabled:hover .marble.player-bg--0 {
+.game-container.current-player--2 .cell:enabled:hover .marble.player-bg--0 {
   background-color: var(--player2-color--hover);
 }
 
