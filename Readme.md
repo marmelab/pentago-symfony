@@ -18,8 +18,17 @@ Definition and rules from Wikipedia :
 - Run `make install` to install dependencies
 - Run `make start` to start the game
 - Play on [localhost:8080](http://localhost:8080)
-- Adminer is available on [localhost:8081](http://localhost:8081)
   
 > Type `make help` to list all commands available
 
+## Database persistance
 
+We are using a postgres image to run locally our database.
+You can access to Adminer on [localhost:8081](http://localhost:8081) and entering informations given in the `.env` file.
+
+> Do not using .env to store your personal credentials because it's git tracked.
+
+### Migrations
+
+- `make create-migration` for creating a doctrine migration if entities has been changed.
+- `make migrate` to run pending migrations.
