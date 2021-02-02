@@ -40,6 +40,7 @@ class BoardService
 
     public function addMarble(array $board, array $position, int $value): array
     {
+        $board = array_merge(array(), $board);
         $board[$position[0]][$position[1]] = $value;
 
         return $board;
@@ -92,6 +93,7 @@ class BoardService
             Replace a quarter on $board by the given $quarter
             return the updated board
         */
+        $board = array_merge(array(), $board);
 
         $startRow = $quarter["boundaries"]["startRow"];
         $startColumn = $quarter["boundaries"]["startColumn"];
