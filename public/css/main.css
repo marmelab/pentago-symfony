@@ -1,7 +1,12 @@
 :root {
-  --main-bg-color: #264653;
-  --player1-color: #e9c46a;
-  --player2-color: #e76f51;
+  --main-bg-color: #333333;
+  --player1-color: #fed766;
+  --player1-color--hover: #fee59a;
+  --player2-color: #78daea;
+  --player2-color--hover: #caf1f7;
+  --empty-color: white;
+  --cell-bg-color: #f3f4f6;
+  --quarter-radius: 20px;
 }
 
 html,
@@ -14,6 +19,14 @@ body {
 
 body {
   background-color: var(--main-bg-color);
+}
+
+button {
+  outline: none;
+  color: transparent;
+  border: none;
+  cursor: pointer;
+  background-color: inherit;
 }
 
 h1,

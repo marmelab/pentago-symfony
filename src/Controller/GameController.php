@@ -2,25 +2,24 @@
 
 namespace App\Controller;
 
-use App\Service\GameService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+
+use App\Entity\Game;
+use App\Service\GameService;
 
 class GameController extends AbstractController
 {
     const COOKIE_KEY = 'pentago';
 
     private GameService $gameService;
-    private SessionInterface $session;
 
-    public function __construct(GameService $gameService, SessionInterface $session)
+    public function __construct(GameService $gameService)
     {
         $this->gameService = $gameService;
-        $this->session = $session;
     }
 
     /**
@@ -28,58 +27,72 @@ class GameController extends AbstractController
      */
     public function newGame(): Response
     {
+        $entityManager = $this->getDoctrine()->getManager();
         $game = $this->gameService->initGame();
 
         $playerHash = $this->generatePlayerHash();
 
-        $response = $this->redirectToRoute('game');
+        $entityManager->persist($game);
+        $entityManager->flush();
+
+        $response = $this->redirectToRoute(
+            'game',
+            [
+                "id" => $game->getId()
+            ]
+        );
 
         $response->headers->setCookie(new Cookie($this::COOKIE_KEY, $playerHash));
-        $this->session->set($playerHash, $game);
 
         return $response;
     }
 
     /**
-     * @Route("/game", name="game")
+     * @Route("/game/{id}", name="game")
      * Used to display the board
      */
-    public function game(Request $request): Response
+    public function game(Request $request, string $id): Response
     {
-
         $playerHash = $request->cookies->get($this::COOKIE_KEY);
-        if (!$playerHash || !$this->session->get($playerHash)) {
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $game = $entityManager->getRepository(Game::class)->find($id);
+
+
+
+        if (!$playerHash || !$game) {
             return $this->redirectToRoute('newGame');
         }
 
-        $game = $this->session->get($playerHash);
 
-        $action = $game["turnStatus"] === GameService::ADD_MARBLE_STATUS ?
-            $this->generateUrl('addMarble') :
-            $this->generateUrl('rotateQuarter');
+        $action = $game->getTurnStatus() === GameService::ADD_MARBLE_STATUS ?
+            $this->generateUrl('addMarble', ["id" => $game->getId()]) :
+            $this->generateUrl('rotateQuarter', ["id" => $game->getId()]);
 
         return $this->render('game/index.html.twig', [
-            'board' => $game["board"],
-            'turnStatus' => $game["turnStatus"],
-            'currentPlayer' => $game["currentPlayer"],
+            'board' => $game->getBoard(),
+            'turnStatus' => $game->getTurnStatus(),
+            'playerTurn' => $game->getPlayerTurn(),
             'action' =>  $action,
             'method' => 'POST',
         ]);
     }
 
     /**
-     * @Route("/game/addMarble", name="addMarble")
+     * @Route("/game/{id}/addMarble", name="addMarble")
      * Add a marble to the board
      */
 
-    public function addMarble(Request $request): Response
+    public function addMarble(Request $request, string $id): Response
     {
         $playerHash = $request->cookies->get($this::COOKIE_KEY);
-        if (!$playerHash || !$this->session->get($playerHash)) {
-            return $this->redirectToRoute('index');
-        }
 
-        $game = $this->session->get($playerHash);
+        $entityManager = $this->getDoctrine()->getManager();
+        $game = $entityManager->getRepository(Game::class)->find($id);
+
+        if (!$playerHash || !$game) {
+            return $this->redirectToRoute('newGame');
+        }
 
         $position = $request->get('position');
 
@@ -91,33 +104,35 @@ class GameController extends AbstractController
         $position[0] -= 1;
         $position[1] -= 1;
 
-        $game = $this->gameService->addMarbleIfPositionIsValid($game, $position, $game["currentPlayer"]);
+        $game = $this->gameService->addMarbleIfPositionIsValid($game, $position, $game->getPlayerTurn());
+        $entityManager->flush();
 
-        $this->session->set($playerHash, $game);
-
-        return $this->redirectToRoute('game');
+        return $this->redirectToRoute('game', ["id" => $game->getId()]);
     }
 
     /**
-     * @Route("/game/rotateQuarter", name="rotateQuarter")
+     * @Route("/game/{id}/rotateQuarter", name="rotateQuarter")
      * Add a marble to the board
      */
 
-    public function rotateQuarter(Request $request): Response
+    public function rotateQuarter(Request $request, string $id): Response
     {
         $playerHash = $request->cookies->get($this::COOKIE_KEY);
-        if (!$playerHash || !$this->session->get($playerHash)) {
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $game = $entityManager->getRepository(Game::class)->find($id);
+
+        if (!$playerHash || !$game) {
             return $this->redirectToRoute('newGame');
         }
-
-        $game = $this->session->get($playerHash);
 
         $rotationKey = $request->get('rotation-key');
 
         $game = $this->gameService->rotateQuarterBy90Degrees($game, $rotationKey);
 
-        $this->session->set($playerHash, $game);
-        return $this->redirectToRoute('game');
+        $entityManager->flush();
+
+        return $this->redirectToRoute('game', ["id" => $game->getId()]);
     }
 
 

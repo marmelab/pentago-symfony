@@ -1,40 +1,73 @@
 .game-container {
-  padding-top: 120px;
+  padding-top: 20px;
+}
+
+.board {
+  position: relative;
+  margin: auto;
+  width: 420px;
 }
 
 .row {
-  width: 420px;
   margin: auto;
   display: flex;
   align-items: center;
-}
-.row:first-child > .cell {
-  border-top: 1px solid;
-}
-
-.row:nth-child(3) > .cell {
-  border-bottom-width: 3px;
 }
 
 .cell {
   width: 70px;
   height: 70px;
   flex: 1;
-  border: none; /* Resetting default browser borders */
-  border-right: 1px solid;
-  border-bottom: 1px solid;
   border-color: var(--main-bg-color);
-  cursor: pointer;
-  background-color: white;
-  outline: none;
+  background-color: var(--cell-bg-color);
 }
 
-.cell:first-child {
-  border-left: 1px solid;
+.marble {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin: auto;
+  transition: 0.2s ease all;
+  background-color: var(--empty-color);
+}
+
+/**
+  Quarter radius
+**/
+.row:first-child > .cell:first-child,
+.row:first-child > .cell:nth-child(4),
+.row:nth-child(4) > .cell:first-child,
+.row:nth-child(4) > .cell:nth-child(4) {
+  border-top-left-radius: var(--quarter-radius);
+}
+
+.row:first-child > .cell:nth-child(3),
+.row:first-child > .cell:last-child,
+.row:nth-child(4) > .cell:nth-child(3),
+.row:nth-child(4) > .cell:last-child {
+  border-top-right-radius: var(--quarter-radius);
+}
+
+.row:nth-child(3) > .cell:first-child,
+.row:nth-child(3) > .cell:nth-child(4),
+.row:nth-child(6) > .cell:first-child,
+.row:nth-child(6) > .cell:nth-child(4) {
+  border-bottom-left-radius: var(--quarter-radius);
+}
+
+.row:nth-child(3) > .cell:nth-child(3),
+.row:nth-child(3) > .cell:last-child,
+.row:nth-child(6) > .cell:nth-child(3),
+.row:nth-child(6) > .cell:last-child {
+  border-bottom-right-radius: var(--quarter-radius);
+}
+
+.row:nth-child(3) > .cell {
+  margin-bottom: 3px;
 }
 
 .cell:nth-child(3) {
-  border-right-width: 3px;
+  margin-right: 3px;
 }
 
 .player-color--1 {
@@ -53,12 +86,46 @@
   background-color: var(--player2-color);
 }
 
-.rotate-controls {
+.game-container.player-turn--1 .cell:enabled:hover .marble.player-bg--0 {
+  background-color: var(--player1-color--hover);
+}
+
+.game-container.player-turn--2 .cell:enabled:hover .marble.player-bg--0 {
+  background-color: var(--player2-color--hover);
+}
+
+.rotate-controls-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  bottom: 0;
+  right: 0;
+  border-radius: var(--quarter-radius);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+}
+
+.rotate-controls-quarter {
+  opacity: 0.5;
   display: flex;
-  width: 420px;
-  margin: auto;
-  justify-content: space-around;
-  padding: 20px 0;
+  align-items: stretch;
+  border-radius: var(--quarter-radius);
+  overflow: hidden;
+}
+
+.rotate-controls-quarter button {
+  width: 100%;
+  transition: 0.2s all ease;
+}
+
+.rotate-controls-quarter button:hover {
+  background-color: var(--cell-bg-color);
+}
+
+.rotate-controls-quarter .icon {
+  width: 40px;
 }
 
 .icon--inversed {

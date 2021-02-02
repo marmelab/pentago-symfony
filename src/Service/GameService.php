@@ -2,8 +2,8 @@
 
 namespace App\Service;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Service\BoardService;
+use App\Entity\Game;
 
 class GameService
 {
@@ -17,40 +17,41 @@ class GameService
         $this->boardService = $boardService;
     }
 
-    public function initGame(): array
+    public function initGame(): Game
     {
-        return array(
-            "board" => $this->boardService->initBoard(),
-            "turnStatus" => self::ADD_MARBLE_STATUS,
-            "currentPlayer" => 1
-        );
+        $game = new Game();
+        $game->setBoard($this->boardService->initBoard());
+        $game->setTurnStatus(self::ADD_MARBLE_STATUS);
+        $game->setPlayerTurn(1);
+
+        return $game;
     }
 
-    public function changeCurrentPlayer(int $currentPlayer): int
+    public function changePlayerTurn(int $playerTurn): int
     {
-        return $currentPlayer === 1 ? 2 : 1;
+        return $playerTurn === 1 ? 2 : 1;
     }
 
 
 
-    public function addMarbleIfPositionIsValid(array $game, array $position, int $value): array
+    public function addMarbleIfPositionIsValid(Game $game, array $position, int $value): Game
     {
-        $board = $game["board"];
+        $board = $game->getBoard();
 
         if ($this->boardService->isPositionAvailable($board, $position) === true) {
             $board = $this->boardService->addMarble($board, $position, $value);
 
             // Update board in the game with the new one.
-            $game["board"] = $board;
+            $game->setBoard($board);
 
             // Change step to rotation quarter
-            $game["turnStatus"] = self::ROTATE_QUARTER_STATUS;
+            $game->setTurnStatus(self::ROTATE_QUARTER_STATUS);
         }
 
         return $game;
     }
 
-    public function rotateQuarterBy90Degrees(array $game, int $rotationKey): array
+    public function rotateQuarterBy90Degrees(Game $game, int $rotationKey): Game
     {
         /*
         Schema of the board with quarters and rotation keys :
@@ -63,7 +64,7 @@ class GameService
             6 ↺  5 ↻ 
         */
 
-        $board = $game["board"];
+        $board = $game->getBoard();
 
         /* Rotation key is an integer between 0 and 7.
             odd means a counter clockwise rotation.
@@ -99,13 +100,14 @@ class GameService
             | 4 | 3 |
             └───+───┘
         */
-        $game["board"] = $this->boardService->setQuarterOnBoard($board, $quarter);
+        $board = $this->boardService->setQuarterOnBoard($board, $quarter);
+        $game->setBoard($board);
 
         // Change step to add marble.
-        $game["turnStatus"] = self::ADD_MARBLE_STATUS;
+        $game->setTurnStatus((self::ADD_MARBLE_STATUS));
 
         // Player has finished his turn
-        $game["currentPlayer"] = $this->changeCurrentPlayer($game["currentPlayer"]);
+        $game->setPlayerTurn($this->changePlayerTurn($game->getPlayerTurn()));
 
         return $game;
     }
