@@ -17,7 +17,7 @@ stop: ## Stop containers in dev environment
 	docker-compose down
 
 create-db: ## Create database
-	docker-compose run symfony bash -ci 'php bin/console make:migration'
+	docker-compose run symfony bash -ci 'php bin/console doctrine:database:create --if-not-exists'
 
 create-migration: ## Create migration for doctrine
 	docker-compose run symfony bash -ci 'php bin/console make:migration'
