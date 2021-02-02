@@ -16,7 +16,9 @@ Definition and rules from Wikipedia :
 
 - Clone this repo
 - Run `make install` to install dependencies
-- Run `make start` to start the game
+- Run `make init-env` to create a .env.local file, update this files with your informations
+- Run `make start` to start the server
+- Run `make create-db` to create & initialize the database
 - Play on [localhost:8080](http://localhost:8080)
   
 > Type `make help` to list all commands available
@@ -24,7 +26,7 @@ Definition and rules from Wikipedia :
 ## Database persistance
 
 We are using a postgres image to run locally our database.
-You can access to Adminer on [localhost:8081](http://localhost:8081) and entering informations given in the `.env` file.
+You can access to Adminer on [localhost:8081](http://localhost:8081) and entering credentials from the `.env.local` file.
 
 > Do not using .env to store your personal credentials because it's git tracked.
 
