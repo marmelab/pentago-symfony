@@ -15,6 +15,22 @@ Definition and rules from Wikipedia :
 ## Installation
 
 - Clone this repo
-- Run `make install` to install dependencies
-- Run `make start` to start the game
-- Play
+- Run `make install` to install dependencies. It will also create a `.env.local` file.
+- Fill `.env.local` file with your credentials.
+- Run `make start` to start the server
+- Run `make create-db` to create & initialize the database
+- Play on [localhost:8080](http://localhost:8080)
+  
+> Type `make help` to list all commands available
+
+## Database persistance
+
+We are using a postgres image to run locally our database.
+You can access to Adminer on [localhost:8081](http://localhost:8081) and entering credentials from the `.env.local` file.
+
+> Do not using .env to store your personal credentials because it's git tracked.
+
+### Migrations
+
+- `make create-migration` for creating a doctrine migration if entities has been changed.
+- `make migrate` to run pending migrations.
