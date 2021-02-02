@@ -11,3 +11,9 @@ start: ## Start containers in dev environment
 
 stop: ## Stop containers in dev environment
 	docker-compose down
+
+create-migration: ## Create migration for doctrine
+	docker-compose run symfony bash -ci 'php bin/console make:migration'
+
+migrate: ## Execute pending migrations
+	docker-compose run symfony bash -ci 'php bin/console doctrine:migrations:migrate'

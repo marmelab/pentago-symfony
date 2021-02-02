@@ -17,4 +17,9 @@ Definition and rules from Wikipedia :
 - Clone this repo
 - Run `make install` to install dependencies
 - Run `make start` to start the game
-- Play
+- Play on [localhost:8080](http://localhost:8080)
+- Adminer is available on [localhost:8081](http://localhost:8081)
+  
+> Type `make help` to list all commands available
+
+

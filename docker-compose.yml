@@ -8,6 +8,8 @@ services:
     command: "/usr/local/bin/symfony server:start --port 8080"
     ports:
       - 8080:8080
+    depends_on:
+      - database
 
   database:
     image: "postgres" # use latest official postgres version
