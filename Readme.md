@@ -19,6 +19,7 @@ Definition and rules from Wikipedia :
 - Fill `.env.local` file with your credentials.
 - Run `make start` to start the server
 - Run `make create-db` to create & initialize the database
+- Run `make migrate` to run migrations
 - Play on [localhost:8080](http://localhost:8080)
   
 > Type `make help` to list all commands available
