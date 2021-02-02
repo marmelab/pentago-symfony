@@ -11,7 +11,7 @@
 
 {% block body %}
 
-<form action="{{action}}" method="POST" class="game-container">
+<form action="{{action}}" method="POST" class="game-container player-turn--{{playerTurn}}">
         {% if playerTurn == 1 %}
             <h2 class="player-color--1">Player 1, this is your turn !</h2>
         {% else %}
@@ -56,7 +56,10 @@
             {% for row in board %}
                 <div class="row">
                     {% for value in row %}
-                        <button type="submit" name="position" {% if turnStatus != constant('App\\Service\\GameService::ADD_MARBLE_STATUS') %} disabled="disabled" {% endif %} value="{{loop.parent.loop.index}}-{{loop.index}}" class="cell player-bg--{{value}}"></button>
+                        <button type="submit" name="position" {% if turnStatus != constant('App\\Service\\GameService::ADD_MARBLE_STATUS') or value != 0 %} disabled="disabled" {% endif %} value="{{loop.parent.loop.index}}-{{loop.index}}" class="cell">
+							<div class="marble player-bg--{{value}}"></div>
+					
+						</button>
                     {% endfor %}
                 </div>
             {% endfor %}
