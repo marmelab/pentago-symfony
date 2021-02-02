@@ -107,7 +107,7 @@ class GameController extends AbstractController
     {
         $playerHash = $request->cookies->get($this::COOKIE_KEY);
         if (!$playerHash || !$this->session->get($playerHash)) {
-            return $this->redirectToRoute('index');
+            return $this->redirectToRoute('newGame');
         }
 
         $game = $this->session->get($playerHash);
