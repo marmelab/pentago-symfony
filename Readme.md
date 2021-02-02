@@ -15,8 +15,8 @@ Definition and rules from Wikipedia :
 ## Installation
 
 - Clone this repo
-- Run `make install` to install dependencies
-- Run `make init-env` to create a .env.local file, update this files with your informations
+- Run `make install` to install dependencies. It will also create a `.env.local` file.
+- Fill `.env.local` file with your credentials.
 - Run `make start` to start the server
 - Run `make create-db` to create & initialize the database
 - Play on [localhost:8080](http://localhost:8080)

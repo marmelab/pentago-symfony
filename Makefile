@@ -5,7 +5,7 @@ init-env: ## Create .env.local for your purpose.
 	cp -n ./.env.example .env.local
 
 
-install: ## Install dependencies using composer
+install: init-env ## Install dependencies using composer
 	docker-compose build
 	docker-compose run --rm symfony bash -ci 'composer install'
 	docker-compose run --rm symfony bash -ci 'composer update'
