@@ -24,28 +24,6 @@
 			<h3>Please turn a quarter</h3>
 		{% endif %}
 
-		{% if turnStatus == constant('App\\Service\\GameService::ROTATE_QUARTER_STATUS') %}
-
-			<div class="rotate-controls">
-				<button type=" submit" name="rotation-key" value="0">
-					<img class="icon icon--inversed" src="{{ asset('svg/rotate.svg') }}" alt="clockwise rotation icon"/>
-					Quarter 1
-				</button>
-				<button type="submit" name="rotation-key" value="1">
-					<img class="icon icon" src="{{ asset('svg/rotate.svg') }}" alt="counter-clockwise rotation icon"/>
-					Quarter 1
-				</button>
-				<button type=" submit" name="rotation-key" value="2">
-					<img class="icon icon--inversed" src="{{ asset('svg/rotate.svg') }}" alt="clockwise rotation icon"/>
-					Quarter 2
-				</button>
-				<button type="submit" name="rotation-key" value="3">
-					<img class="icon icon" src="{{ asset('svg/rotate.svg') }}" alt="counter-clockwise rotation icon"/>
-					Quarter 2
-				</button>
-			</div>
-		{% endif %}
-
 		{# Each cell has a couple of coords as value : "row-column" (e.g : "O-5")
         Twig inject in loops an object "loop".
         loop.index is the iterator (start 1 to 6).
@@ -62,28 +40,43 @@
 						</button>
                     {% endfor %}
                 </div>
-            {% endfor %}
+			{% endfor %}
+			{% if turnStatus == constant('App\\Service\\GameService::ROTATE_QUARTER_STATUS') %}
+				<div class="rotate-controls-overlay">
+					<div class="rotate-controls-quarter">
+						<button type="submit" name="rotation-key" value="0">
+							<img class="icon icon--inversed" src="{{ asset('svg/rotate.svg') }}" alt="counter-clockwise rotation icon"/>
+						</button>
+						<button type=" submit" name="rotation-key" value="1">
+							<img class="icon" src="{{ asset('svg/rotate.svg') }}" alt="clockwise rotation icon"/>
+						</button>
+					</div>
+					<div class="rotate-controls-quarter">
+						<button type="submit" name="rotation-key" value="2">
+							<img class="icon icon--inversed" src="{{ asset('svg/rotate.svg') }}" alt="counter-clockwise rotation icon"/>
+						</button>
+						<button type=" submit" name="rotation-key" value="3">
+							<img class="icon" src="{{ asset('svg/rotate.svg') }}" alt="clockwise rotation icon"/>
+						</button>
+					</div>
+					<div class="rotate-controls-quarter">
+						<button type="submit" name="rotation-key" value="6">
+							<img class="icon icon--inversed" src="{{ asset('svg/rotate.svg') }}" alt="counter-clockwise rotation icon"/>
+						</button>
+						<button type=" submit" name="rotation-key" value="7">
+							<img class="icon" src="{{ asset('svg/rotate.svg') }}" alt="clockwise rotation icon"/>
+						</button>
+					</div>
+					<div class="rotate-controls-quarter">
+						<button type="submit" name="rotation-key" value="4">
+							<img class="icon icon--inversed" src="{{ asset('svg/rotate.svg') }}" alt="counter-clockwise rotation icon"/>
+						</button>
+						<button type=" submit" name="rotation-key" value="5">
+							<img class="icon" src="{{ asset('svg/rotate.svg') }}" alt="clockwise rotation icon"/>
+						</button>
+					</div>
+				</div>
+			{% endif %}
         </div>
-
-		{% if turnStatus == constant('App\\Service\\GameService::ROTATE_QUARTER_STATUS') %}
-			<div class="rotate-controls">
-				<button type="submit" name="rotation-key" value="6">
-					<img class="icon icon--inversed" src="{{ asset('svg/rotate.svg') }}" alt="counter-clockwise rotation icon"/>
-					Quarter 4
-				</button>
-				<button type=" submit" name="rotation-key" value="7">
-					<img class="icon" src="{{ asset('svg/rotate.svg') }}" alt="clockwise rotation icon"/>
-					Quarter 4
-				</button>
-				<button type="submit" name="rotation-key" value="4">
-					<img class="icon icon--inversed" src="{{ asset('svg/rotate.svg') }}" alt="counter-clockwise rotation icon"/>
-					Quarter 3
-				</button>
-				<button type=" submit" name="rotation-key" value="5">
-					<img class="icon" src="{{ asset('svg/rotate.svg') }}" alt="clockwise rotation icon"/>
-					Quarter 3
-				</button>
-			</div>
-		{% endif %}
 	</form>
 {% endblock %}

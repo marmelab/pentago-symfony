@@ -6,6 +6,7 @@
   --player2-color--hover: #caf1f7;
   --empty-color: white;
   --cell-bg-color: #f3f4f6;
+  --quarter-radius: 20px;
 }
 
 html,
@@ -18,6 +19,14 @@ body {
 
 body {
   background-color: var(--main-bg-color);
+}
+
+button {
+  outline: none;
+  color: transparent;
+  border: none;
+  cursor: pointer;
+  background-color: inherit;
 }
 
 h1,
