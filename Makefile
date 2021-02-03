@@ -25,5 +25,5 @@ create-migration: ## Create migration for doctrine
 migrate: ## Execute pending migrations
 	docker-compose run symfony bash -ci 'php bin/console doctrine:migrations:migrate'
 
-connect-db: ## Connect to database container (useful for debugging)
-    docker-compose exec database psql pentago
+connect-db:	## Connect to database container (useful for debugging)
+	docker-compose exec database psql pentago

@@ -32,6 +32,11 @@ class GameService
         return $game;
     }
 
+    public function isStarted(Game $game): bool
+    {
+        return $game->getStatus() === self::GAME_STARTED;
+    }
+
     // Add new player as player2 and let's go to start this game !
     public function setPlayer2AndStartGame(string $player2Hash, Game $game): Game
     {

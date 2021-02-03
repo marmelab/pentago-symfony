@@ -29,6 +29,7 @@ class GameController extends AbstractController
      */
     public function newGame(): Response
     {
+
         $entityManager = $this->getDoctrine()->getManager();
         $playerHash = $this->playerService->generatePlayerHash();
         $game = $this->gameService->initGame($playerHash);
@@ -42,9 +43,50 @@ class GameController extends AbstractController
                 "id" => $game->getId()
             ]
         );
-
         $response->headers->setCookie(new Cookie($this::COOKIE_KEY, $playerHash));
 
+        return $response;
+    }
+
+    /**
+     * @Route("/game/{id}/invite", name="inviteGame")
+     */
+    public function inviteGame(Request $request, string $id): Response
+    {
+        $playerHash = $request->cookies->get($this::COOKIE_KEY);
+
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $game = $entityManager->getRepository(Game::class)->find($id);
+        if (!$game) {
+            return $this->redirectToRoute('newGame');
+        }
+
+        if (!$playerHash) {
+            $playerHash = $this->playerService->generatePlayerHash();
+        }
+
+        if ($game->getPlayer1Hash() === null) {
+            // If this game has no player 1 (this case is impossible in theory but for debugging purpose it's useful)
+            // Set this player as player 1
+            $game->setPlayer1Hash($playerHash);
+        } elseif ($playerHash !== $game->getPlayer1Hash() && $game->getPlayer2Hash() === null) {
+            // If game has no player 2
+            // Start this game !
+            $game = $this->gameService->setPlayer2AndStartGame($playerHash, $game);
+        }
+
+        $entityManager->flush();
+
+        // Anyway, player or not, we should redirect to this game
+        $response = $this->redirectToRoute(
+            'game',
+            [
+                "id" => $game->getId()
+            ]
+        );
+        // With the $playerHash as cookie !
+        $response->headers->setCookie(new Cookie($this::COOKIE_KEY, $playerHash));
         return $response;
     }
 
@@ -56,23 +98,11 @@ class GameController extends AbstractController
     {
         $playerHash = $request->cookies->get($this::COOKIE_KEY);
 
-
         $entityManager = $this->getDoctrine()->getManager();
         $game = $entityManager->getRepository(Game::class)->find($id);
         if (!$game) {
             return $this->redirectToRoute('newGame');
         }
-
-        // If a new player come on this page and game is not started yet... 
-        if (!$playerHash && $game->getStatus() === $this->gameService::GAME_WAITING_OPPONENT) {
-            $playerHash = $this->playerService->generatePlayerHash();
-
-            // We have the second player !
-            $game = $this->gameService->setPlayer2AndStartGame($playerHash, $game);
-
-            $entityManager->flush();
-        }
-
 
         $action = $game->getTurnStatus() === GameService::ADD_MARBLE_STATUS ?
             $this->generateUrl('addMarble', ["id" => $game->getId()]) :
@@ -87,7 +117,7 @@ class GameController extends AbstractController
             'turnStatus' => $game->getTurnStatus(),
             'isYourTurn' => $game->getCurrentPlayerHash() === $playerHash,
             'yourValue' => $yourValue,
-            'isWitness' => !$playerHash,
+            'isWitness' => !$yourValue,
             'action' =>  $action,
             'method' => 'POST',
         ]);
