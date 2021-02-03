@@ -42,9 +42,14 @@ class Game
     private $turnStatus;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string", length=255)
      */
-    private $playerTurn;
+    private $status;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $currentPlayerHash;
 
     public function getId(): ?UuidV4
     {
@@ -99,14 +104,26 @@ class Game
         return $this;
     }
 
-    public function getPlayerTurn(): ?int
+    public function getStatus(): ?string
     {
-        return $this->playerTurn;
+        return $this->status;
     }
 
-    public function setPlayerTurn(int $playerTurn): self
+    public function setStatus(string $status): self
     {
-        $this->playerTurn = $playerTurn;
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function getCurrentPlayerHash(): ?string
+    {
+        return $this->currentPlayerHash;
+    }
+
+    public function setCurrentPlayerHash(?string $currentPlayerHash): self
+    {
+        $this->currentPlayerHash = $currentPlayerHash;
 
         return $this;
     }

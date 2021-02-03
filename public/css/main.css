@@ -29,6 +29,10 @@ button {
   background-color: inherit;
 }
 
+button:disabled {
+  cursor: default;
+}
+
 h1,
 h2,
 h3,

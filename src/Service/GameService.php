@@ -10,6 +10,9 @@ class GameService
     public const ADD_MARBLE_STATUS = "add_marble";
     public const ROTATE_QUARTER_STATUS = "rotate_quarter";
 
+    public const GAME_WAITING_OPPONENT = "waiting_opponent";
+    public const GAME_STARTED = "started";
+
     private $boardService;
 
     public function __construct(BoardService $boardService)
@@ -17,28 +20,67 @@ class GameService
         $this->boardService = $boardService;
     }
 
-    public function initGame(): Game
+    public function initGame(string $player1Hash): Game
     {
         $game = new Game();
         $game->setBoard($this->boardService->initBoard());
         $game->setTurnStatus(self::ADD_MARBLE_STATUS);
-        $game->setPlayerTurn(1);
+        $game->setStatus(self::GAME_WAITING_OPPONENT);
+        $game->setPlayer1Hash($player1Hash);
+        $game->setCurrentPlayerHash($player1Hash);
 
         return $game;
     }
 
-    public function changePlayerTurn(int $playerTurn): int
+    public function isStarted(Game $game): bool
     {
-        return $playerTurn === 1 ? 2 : 1;
+        return $game->getStatus() === self::GAME_STARTED;
     }
 
+    // Add new player as player2 and let's go to start this game !
+    public function setPlayer2AndStartGame(string $player2Hash, Game $game): Game
+    {
+        $game->setPlayer2Hash($player2Hash);
+        $game->setStatus(self::GAME_STARTED);
 
+        return $game;
+    }
 
-    public function addMarbleIfPositionIsValid(Game $game, array $position, int $value): Game
+    // From a player hash, get if it's player1, 2 or null
+    public function getPlayerValue(Game $game, ?string $playerHash): ?int
+    {
+        if ($game->getPlayer1Hash() === $playerHash) {
+            return 1;
+        }
+
+        if ($game->getPlayer2Hash() === $playerHash) {
+            return 2;
+        }
+
+        return null;
+    }
+
+    public function getCurrentPlayerValue(Game $game): int
+    {
+        return $this->getPlayerValue($game, $game->getCurrentPlayerHash());
+    }
+
+    // End of turn, switch to the other player.
+    public function changeCurrentPlayerHash(Game $game): string
+    {
+        $currentPlayerValue = $this->getCurrentPlayerValue($game);
+
+        return $currentPlayerValue === 1 ? $game->getPlayer2Hash() : $game->getPlayer1Hash();
+    }
+
+    public function addMarbleIfPositionIsValid(Game $game, array $position): Game
     {
         $board = $game->getBoard();
 
         if ($this->boardService->isPositionAvailable($board, $position) === true) {
+
+            $value = $this->getCurrentPlayerValue($game);
+
             $board = $this->boardService->addMarble($board, $position, $value);
 
             // Update board in the game with the new one.
@@ -107,7 +149,7 @@ class GameService
         $game->setTurnStatus((self::ADD_MARBLE_STATUS));
 
         // Player has finished his turn
-        $game->setPlayerTurn($this->changePlayerTurn($game->getPlayerTurn()));
+        $game->setCurrentPlayerHash($this->changeCurrentPlayerHash($game));
 
         return $game;
     }
