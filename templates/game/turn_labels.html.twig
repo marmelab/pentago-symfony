@@ -1,0 +1,17 @@
+{% if isWitness == false %}
+    {% if isYourTurn %}
+        <h2 class="player-color--{{ yourValue }}">Player {{ yourValue }}, this is your turn !</h2>
+    {% else %}
+        <h2 class="player-color--{{ yourValue }}">Player {{ yourValue }}, be patient !</h2>
+    {% endif %}
+
+    {% if isYourTurn == false %}
+        <h3>Your are waiting your opponent...</h3>
+    {% elseif turnStatus == constant('App\\Service\\GameService::ADD_MARBLE_STATUS') %}
+        <h3>Please add a marble</h3>
+    {% else %}
+        <h3>Please turn a quarter</h3>
+    {% endif %}
+{% else %}
+    <h2>You are spectator of this awesome game.</h2>
+{% endif %}

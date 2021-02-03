@@ -2,8 +2,6 @@
 
 namespace App\Service;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-
 class BoardService
 {
     public const BOARD_LENGTH = 6;
@@ -16,7 +14,7 @@ class BoardService
     }
 
 
-    private function isOutsideBoard(array $position): bool
+    public function isOutsideBoard(array $position): bool
     {
         if ($position[0] < 0 || $position[0] >= self::BOARD_LENGTH || $position[1] < 0 || $position[1] >= self::BOARD_LENGTH) {
             return true;

@@ -1,22 +1,9 @@
 <form action="{{action}}" method="POST" class="game-container current-player--{{ yourValue }}">
-    {% if isWitness == false %}
-        {% if isYourTurn %}
-            <h2 class="player-color--{{ yourValue }}">Player {{ yourValue }}, this is your turn !</h2>
-        {% else %}
-            <h2 class="player-color--{{ yourValue }}">Player {{ yourValue }}, be patient !</h2>
-        {% endif %}
-
-        {% if isYourTurn == false %}
-            <h3>Your are waiting your opponent...</h3>
-        {% elseif turnStatus == constant('App\\Service\\GameService::ADD_MARBLE_STATUS') %}
-            <h3>Please add a marble</h3>
-        {% else %}
-            <h3>Please turn a quarter</h3>
-        {% endif %}
+    {% if status == constant('App\\Service\\GameService::GAME_FINISHED') %}
+        {% include 'game/finished.html.twig' %}
     {% else %}
-        <h2>You are spectator of this awesome game.</h2>
+        {% include 'game/turn_labels.html.twig'%}
     {% endif %}
-
     {# Each cell has a couple of coords as value : "row-column" (e.g : "O-5")
     Twig inject in loops an object "loop".
     loop.index is the iterator (start 1 to 6).
@@ -27,13 +14,13 @@
         {% for row in board %}
             <div class="row">
                 {% for value in row %}
-                    <button type="submit" name="position" {% if isYourTurn == false or turnStatus == constant('App\\Service\\GameService::ROTATE_QUARTER_STATUS') or value != 0 %} disabled="disabled" {% endif %} value="{{loop.parent.loop.index}}-{{loop.index}}" class="cell">
+                    <button type="submit" name="position" {% if status != constant('App\\Service\\GameService::GAME_STARTED') or isYourTurn == false or turnStatus == constant('App\\Service\\GameService::ROTATE_QUARTER_STATUS') or value != 0 %} disabled="disabled" {% endif %} value="{{loop.parent.loop.index}}-{{loop.index}}" class="cell">
                         <div class="marble player-bg--{{value}}"></div>
                     </button>
                 {% endfor %}
             </div>
         {% endfor %}
-        {% if isYourTurn and turnStatus == constant('App\\Service\\GameService::ROTATE_QUARTER_STATUS') %}
+        {% if status == constant('App\\Service\\GameService::GAME_STARTED') and isYourTurn and turnStatus == constant('App\\Service\\GameService::ROTATE_QUARTER_STATUS') %}
             <div class="rotate-controls-overlay">
                 <div class="rotate-controls-quarter">
                     <button type="submit" name="rotation-key" value="0">

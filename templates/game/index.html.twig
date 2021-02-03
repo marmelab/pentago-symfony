@@ -12,10 +12,10 @@
 
 {% block body %}
 
-	{% if status == constant('App\\Service\\GameService::GAME_STARTED') %}
-		{% include 'game/board.html.twig' %}
-	{% else %}
+	{% if status == constant('App\\Service\\GameService::GAME_WAITING_OPPONENT') %}
 		{% include 'game/waiting_opponent.html.twig' %}
+	{% else %}
+		{% include 'game/board.html.twig' %}
 	{% endif %}
 {% endblock %}
 
