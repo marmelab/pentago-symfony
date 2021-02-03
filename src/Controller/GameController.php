@@ -62,21 +62,25 @@ class GameController extends AbstractController
             return $this->redirectToRoute('newGame');
         }
 
-        if (!$playerHash) {
-            $playerHash = $this->playerService->generatePlayerHash();
+        // If game is not started yet, we waiting for players !
+        if (!$this->gameService->isStarted($game)) {
+            if (!$playerHash) {
+                $playerHash = $this->playerService->generatePlayerHash();
+            }
+
+            if ($game->getPlayer1Hash() === null) {
+                // If this game has no player 1 (this case is impossible in theory but for debugging purpose it's useful)
+                // Set this player as player 1
+                $game->setPlayer1Hash($playerHash);
+            } elseif ($playerHash !== $game->getPlayer1Hash() && $game->getPlayer2Hash() === null) {
+                // If game has no player 2
+                // Start this game !
+                $game = $this->gameService->setPlayer2AndStartGame($playerHash, $game);
+            }
+            $entityManager->flush();
         }
 
-        if ($game->getPlayer1Hash() === null) {
-            // If this game has no player 1 (this case is impossible in theory but for debugging purpose it's useful)
-            // Set this player as player 1
-            $game->setPlayer1Hash($playerHash);
-        } elseif ($playerHash !== $game->getPlayer1Hash() && $game->getPlayer2Hash() === null) {
-            // If game has no player 2
-            // Start this game !
-            $game = $this->gameService->setPlayer2AndStartGame($playerHash, $game);
-        }
 
-        $entityManager->flush();
 
         // Anyway, player or not, we should redirect to this game
         $response = $this->redirectToRoute(
@@ -100,6 +104,7 @@ class GameController extends AbstractController
 
         $entityManager = $this->getDoctrine()->getManager();
         $game = $entityManager->getRepository(Game::class)->find($id);
+
         if (!$game) {
             return $this->redirectToRoute('newGame');
         }
