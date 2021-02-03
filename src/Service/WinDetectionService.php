@@ -30,7 +30,7 @@ class WinDetectionService
         }
 
         // It's filled by a player, it can be an alignment.
-        $alignedPositions = array($startValue);
+        $alignedPositions[] = $startPosition;
 
         // We need to loop 4 next values in direction.
         for ($i = 1; $i < self::WIN_CONDITION; $i++) {
