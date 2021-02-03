@@ -120,6 +120,7 @@ class GameController extends AbstractController
             'board' => $game->getBoard(),
             'status' => $game->getStatus(),
             'winner' => $game->getWinner(),
+            'allAlignedPositions' => $game->getAllAlignedPositions(),
             'turnStatus' => $game->getTurnStatus(),
             'isYourTurn' => $game->getCurrentPlayerHash() === $playerHash,
             'yourValue' => $yourValue,

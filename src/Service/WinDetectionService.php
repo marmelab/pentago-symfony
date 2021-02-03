@@ -170,11 +170,6 @@ class WinDetectionService
         return $this->loopOverAllPossibilitiesForAlignmentInDirection($board, $rangeRow, $rangeCol, $direction);
     }
 
-    public function mapArrayToGetWinners()
-    {
-    }
-
-
     public function getAllMarblesCombinationsCorrectlyAligned(array $board): array
     {
         /*

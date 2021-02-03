@@ -1,3 +1,15 @@
+@keyframes scale {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 .game-container {
   padding-top: 20px;
 }
@@ -29,6 +41,10 @@
   margin: auto;
   transition: 0.2s ease all;
   background-color: var(--empty-color);
+}
+
+.marble.aligned {
+  animation: scale 1.5s infinite;
 }
 
 /**
