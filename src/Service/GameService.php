@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Service\BoardService;
+use App\Service\WinDetectionService;
 use App\Entity\Game;
 
 class GameService
@@ -12,12 +13,14 @@ class GameService
 
     public const GAME_WAITING_OPPONENT = "waiting_opponent";
     public const GAME_STARTED = "started";
+    public const GAME_FINISHED = "finished";
 
     private $boardService;
 
-    public function __construct(BoardService $boardService)
+    public function __construct(BoardService $boardService, WinDetectionService $winDetectionService)
     {
         $this->boardService = $boardService;
+        $this->winDetectionService = $winDetectionService;
     }
 
     public function initGame(string $player1Hash): Game
@@ -150,6 +153,25 @@ class GameService
 
         // Player has finished his turn
         $game->setCurrentPlayerHash($this->changeCurrentPlayerHash($game));
+
+        // At this step we have also to check if game is finished.
+        $game = $this->checkIfGameIsFinished($game);
+
+        return $game;
+    }
+
+    public function checkIfGameIsFinished(Game $game): Game
+    {
+        $results = $this->winDetectionService->getAllMarblesCombinationsCorrectlyAligned($game->getBoard());
+
+        $numberOfWinners = count($results["winners"]);
+        if ($numberOfWinners > 0) {
+            $game->setStatus(self::GAME_FINISHED);
+            $game->setAllAlignedPositions($results["allAlignedPositions"]);
+
+            $winner = $numberOfWinners === 1 ? array_key_first($results["winners"]) : 0;
+            $game->setWinner($winner);
+        }
 
         return $game;
     }

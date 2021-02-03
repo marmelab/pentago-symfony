@@ -119,6 +119,7 @@ class GameController extends AbstractController
         return $this->render('game/index.html.twig', [
             'board' => $game->getBoard(),
             'status' => $game->getStatus(),
+            'winner' => $game->getWinner(),
             'turnStatus' => $game->getTurnStatus(),
             'isYourTurn' => $game->getCurrentPlayerHash() === $playerHash,
             'yourValue' => $yourValue,

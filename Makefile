@@ -16,6 +16,9 @@ start: ## Start containers in dev environment
 stop: ## Stop containers in dev environment
 	docker-compose down
 
+test: ## Run phpunit test
+	docker-compose run symfony bash -ci 'php bin/phpunit tests'
+
 create-db: ## Create database
 	docker-compose run symfony bash -ci 'php bin/console doctrine:database:create --if-not-exists'
 

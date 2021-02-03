@@ -51,6 +51,16 @@ class Game
      */
     private $currentPlayerHash;
 
+    /**
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private $allAlignedPositions = [];
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $winner;
+
     public function getId(): ?UuidV4
     {
         return $this->id;
@@ -124,6 +134,30 @@ class Game
     public function setCurrentPlayerHash(?string $currentPlayerHash): self
     {
         $this->currentPlayerHash = $currentPlayerHash;
+
+        return $this;
+    }
+
+    public function getAllAlignedPositions(): ?array
+    {
+        return $this->allAlignedPositions;
+    }
+
+    public function setAllAlignedPositions(?array $allAlignedPositions): self
+    {
+        $this->allAlignedPositions = $allAlignedPositions;
+
+        return $this;
+    }
+
+    public function getWinner(): ?int
+    {
+        return $this->winner;
+    }
+
+    public function setWinner(?int $winner): self
+    {
+        $this->winner = $winner;
 
         return $this;
     }

@@ -1,0 +1,10 @@
+<div>
+    <h1>The game is finished !</h1>
+    {% if isWitness %}
+        <h2 class="player-color--{{ winner }}">Player {{ winner }} won !</h2>
+    {% elseif winner == yourValue %}
+        <h2 class="player-color--{{ yourValue }}">Player {{ yourValue }}, you win !</h2>
+    {% else %}
+        <h2 class="player-color--{{ yourValue }}">Player {{ yourValue }}, you loose !</h2>
+    {% endif %}
+</div>

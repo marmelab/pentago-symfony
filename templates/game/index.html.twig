@@ -12,15 +12,15 @@
 
 {% block body %}
 
-	{% if status == constant('App\\Service\\GameService::GAME_STARTED') %}
-		{% include 'game/board.html.twig' %}
-	{% else %}
+	{% if status == constant('App\\Service\\GameService::GAME_WAITING_OPPONENT') %}
 		{% include 'game/waiting_opponent.html.twig' %}
+	{% else %}
+		{% include 'game/board.html.twig' %}
 	{% endif %}
 {% endblock %}
 
 {% block javascripts %}
-	{% if status == constant('App\\Service\\GameService::GAME_WAITING_OPPONENT') or isYourTurn == false %}
+	{% if status == constant('App\\Service\\GameService::GAME_WAITING_OPPONENT') or isYourTurn == false and status != constant('App\\Service\\GameService::GAME_FINISHED')%}
 		<script type="text/javascript">
 			window.setTimeout(() => {
 				window.location.reload();
