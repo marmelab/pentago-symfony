@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Pentagony{% endblock %}
+{% block stylesheets %}
+	{{ parent() }}
+
+	<link href="{{ asset('css/home.css') }}" rel="stylesheet"/>
+{% endblock %}
+{% block body %}
+<div class="home__container">
+    <h1>Pentagony</h1>
+    <h2>A pentago implementation in Symfony</h2>
+    <img class="home__illu" src="{{ asset('svg/game.svg') }}" />
+
+    <div class="home__links">
+        <a href="{{ path('newGame') }}" class="button primary">Create a new game</a>
+        <a href="{{ path('lobby') }}" class="button secondary">Join existing one</a>
+    </div>
+</div>
+{% endblock %}
