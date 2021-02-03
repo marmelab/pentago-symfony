@@ -1,10 +1,16 @@
 :root {
   --main-bg-color: #333333;
-  --player1-color: #fed766;
-  --player1-color--hover: #fee59a;
-  --player2-color: #78daea;
-  --player2-color--hover: #caf1f7;
-  --empty-color: white;
+  --white: white;
+  --primary-color: #fed766;
+  --primary-color--hover: #fee59a;
+  --secondary-color: #78daea;
+  --secondary-color--hover: #caf1f7;
+
+  --player1-color: var(--primary-color);
+  --player1-color--hover: var(--primary-color--hover);
+  --player2-color: var(--secondary-color);
+  --player2-color--hover: var(--secondary-color--hover);
+  --empty-color: var(--white);
   --cell-bg-color: #f3f4f6;
   --quarter-radius: 20px;
 }
@@ -38,4 +44,36 @@ h2,
 h3,
 h4 {
   text-align: center;
+}
+
+.button {
+  padding: 20px;
+  color: var(--white);
+  border: 1px solid var(--white);
+  border-radius: 4px;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 1.4rem;
+  transition: 0.3s ease all;
+  text-transform: uppercase;
+}
+
+.button.primary {
+  background-color: var(--player1-color);
+  border-color: var(--player1-color);
+  color: var(--main-bg-color);
+}
+.button.primary:hover {
+  background-color: var(--primary-color--hover);
+  border-color: var(--primary-color--hover);
+}
+
+.button.secondary {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+  color: var(--main-bg-color);
+}
+.button.secondary:hover {
+  background-color: var(--secondary-color--hover);
+  border-color: var(--secondary-color--hover);
 }

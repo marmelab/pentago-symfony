@@ -25,7 +25,7 @@ class GameController extends AbstractController
     }
 
     /**
-     * @Route("/", name="newGame")
+     * @Route("/game/create", name="newGame")
      */
     public function newGame(): Response
     {
@@ -49,9 +49,9 @@ class GameController extends AbstractController
     }
 
     /**
-     * @Route("/game/{id}/invite", name="inviteGame")
+     * @Route("/games/{id}/join", name="joinGame")
      */
-    public function inviteGame(Request $request, string $id): Response
+    public function joinGame(Request $request, string $id): Response
     {
         $playerHash = $request->cookies->get($this::COOKIE_KEY);
 
@@ -95,7 +95,7 @@ class GameController extends AbstractController
     }
 
     /**
-     * @Route("/game/{id}", name="game")
+     * @Route("/games/{id}", name="game")
      * Used to display the board
      */
     public function game(Request $request, string $id): Response
@@ -131,7 +131,7 @@ class GameController extends AbstractController
     }
 
     /**
-     * @Route("/game/{id}/addMarble", name="addMarble")
+     * @Route("/games/{id}/addMarble", name="addMarble")
      * Add a marble to the board
      */
 
@@ -171,7 +171,7 @@ class GameController extends AbstractController
     }
 
     /**
-     * @Route("/game/{id}/rotateQuarter", name="rotateQuarter")
+     * @Route("/games/{id}/rotateQuarter", name="rotateQuarter")
      * Add a marble to the board
      */
 

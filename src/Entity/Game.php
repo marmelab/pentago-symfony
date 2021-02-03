@@ -5,7 +5,9 @@ namespace App\Entity;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidV4Generator;
 use Doctrine\ORM\Mapping as ORM;
 
+use Gedmo\Mapping\Annotation as Gedmo;
 use App\Repository\GameRepository;
+use DateTime;
 use Symfony\Component\Uid\UuidV4;
 
 /**
@@ -60,6 +62,12 @@ class Game
      * @ORM\Column(type="integer", nullable=true)
      */
     private $winner;
+
+    /**
+     * @Gedmo\Timestampable(on="create")
+     * @Doctrine\ORM\Mapping\Column(type="datetime")
+     */
+    private $created;
 
     public function getId(): ?UuidV4
     {
@@ -160,5 +168,10 @@ class Game
         $this->winner = $winner;
 
         return $this;
+    }
+
+    public function getCreated(): ?DateTime
+    {
+        return $this->created;
     }
 }

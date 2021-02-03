@@ -1,0 +1,32 @@
+.lobby__container {
+  width: 90%;
+  max-width: 600px;
+  margin: auto;
+  padding-top: 60px;
+}
+
+.lobby__empty-screen {
+  margin: auto;
+  text-align: center;
+}
+
+.lobby__illu {
+  margin: 40px auto;
+  max-width: 500px;
+}
+
+.lobby__games-list {
+  list-style-type: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: auto;
+}
+
+.lobby__games-item {
+  width: 120px;
+  padding: 20px;
+  margin: 10px;
+  border: 1px solid var(--white);
+  text-align: center;
+}
