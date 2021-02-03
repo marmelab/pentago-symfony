@@ -15,7 +15,7 @@
             <div class="row">
                 {% for value in row %}
                     <button type="submit" name="position" {% if status != constant('App\\Service\\GameService::GAME_STARTED') or isYourTurn == false or turnStatus == constant('App\\Service\\GameService::ROTATE_QUARTER_STATUS') or value != 0 %} disabled="disabled" {% endif %} value="{{loop.parent.loop.index}}-{{loop.index}}" class="cell">
-                        <div class="marble player-bg--{{value}}"></div>
+                        <div class="marble player-bg--{{value}} {% if [loop.parent.loop.index - 1, loop.index - 1] in allAlignedPositions %}aligned{% endif %}"></div>
                     </button>
                 {% endfor %}
             </div>
