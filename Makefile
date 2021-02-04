@@ -10,11 +10,22 @@ install: init-env ## Install dependencies using composer
 	docker-compose run --rm symfony bash -ci 'composer update'
 	docker-compose run --rm symfony bash -ci 'composer install'
 
+install-prod: init-env ## Install dependencies using composer
+	docker-compose -f docker-compose.prod.yml build
+	docker-compose -f docker-compose.prod.yml run --rm symfony bash -ci 'composer update'
+	docker-compose -f docker-compose.prod.yml run --rm symfony bash -ci 'composer install'
+
 start: ## Start containers in dev environment
 	docker-compose up --force-recreate -d
 
+start-prod: ## Start containers in dev environment
+	docker-compose -f docker-compose.prod.yml up --force-recreate -d 
+
 stop: ## Stop containers in dev environment
 	docker-compose down
+
+stop-prod: ## Stop containers in dev environment
+	docker-compose -f docker-compose.prod.yml down
 
 test: ## Run phpunit test
 	docker-compose run symfony bash -ci 'php bin/phpunit tests'
@@ -30,3 +41,12 @@ migrate: ## Execute pending migrations
 
 connect-db:	## Connect to database container (useful for debugging)
 	docker-compose exec database psql pentago
+
+deploy: ## Deploy on amazon EC2
+	rsync --delete -r -e "ssh -i ${key}" --filter=':- .gitignore' \
+	./ ${user}@${host}:~/pentago
+	ssh -i ${key} ${user}@${host} \
+	'cd pentago &&\
+	make install-prod &&\
+	make start-prod'
+
