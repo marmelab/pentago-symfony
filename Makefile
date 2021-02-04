@@ -10,22 +10,24 @@ install: init-env ## Install dependencies using composer
 	docker-compose run --rm symfony bash -ci 'composer update'
 	docker-compose run --rm symfony bash -ci 'composer install'
 
-install-prod: init-env ## Install dependencies using composer
-	docker-compose -f docker-compose.prod.yml build
-	docker-compose -f docker-compose.prod.yml run --rm symfony bash -ci 'composer update'
-	docker-compose -f docker-compose.prod.yml run --rm symfony bash -ci 'composer install'
 
 start: ## Start containers in dev environment
 	docker-compose up --force-recreate -d
 
-start-prod: ## Start containers in dev environment
-	docker-compose -f docker-compose.prod.yml up --force-recreate -d 
 
 stop: ## Stop containers in dev environment
 	docker-compose down
 
-stop-prod: ## Stop containers in dev environment
-	docker-compose -f docker-compose.prod.yml down
+install-prod: init-env ## Install dependencies using composer in prod
+	docker-compose -f docker-compose.yml -f docker-compose.prod.yml build
+	docker-compose -f docker-compose.yml -f docker-compose.prod.yml run --rm symfony bash -ci 'composer update'
+	docker-compose -f docker-compose.yml -f docker-compose.prod.yml run --rm symfony bash -ci 'composer install'
+
+start-prod: ## Start containers in prod environment
+	docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --force-recreate
+
+stop-prod: ## Stop containers in prod environment
+	docker-compose -f docker-compose.yml -f docker-compose.prod.yml down
 
 test: ## Run phpunit test
 	docker-compose run symfony bash -ci 'php bin/phpunit tests'
@@ -37,7 +39,7 @@ create-migration: ## Create migration for doctrine
 	docker-compose run symfony bash -ci 'php bin/console make:migration'
 
 migrate: ## Execute pending migrations
-	docker-compose run symfony bash -ci 'php bin/console doctrine:migrations:migrate'
+	docker-compose run symfony bash -ci 'php bin/console doctrine:migrations:migrate' --no-interaction
 
 connect-db:	## Connect to database container (useful for debugging)
 	docker-compose exec database psql pentago
@@ -48,5 +50,6 @@ deploy: ## Deploy on amazon EC2
 	ssh -i ${key} ${user}@${host} \
 	'cd pentago &&\
 	make install-prod &&\
-	make start-prod'
+	make start-prod &&\
+	make migrate'
 
