@@ -7,10 +7,15 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mercure\PublisherInterface;
+use Symfony\Component\Mercure\Update;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Uid\UuidV4;
 
 use App\Entity\Game;
 use App\Service\GameService;
 use App\Service\PlayerService;
+use App\Service\MercureCookieService;
 
 class GameController extends AbstractController
 {
@@ -22,6 +27,24 @@ class GameController extends AbstractController
     {
         $this->gameService = $gameService;
         $this->playerService = $playerService;
+    }
+
+    public function notify(PublisherInterface $publisher, UuidV4 $gameId)
+    {
+        // Front end side, we listen events from Mercure hub on DOMAIN/games/id.
+        // Generate this URL : 
+        $url =  $this->generateUrl('game', [
+            'id' => $gameId,
+        ], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        // Create an Update object
+        $update = new Update(
+            $url,
+            'OK' // The body, unused at this time
+        );
+
+        // The Publisher service is an invokable object
+        $publisher($update); // Publish to the mercure hub to notify listeners
     }
 
     /**
@@ -51,7 +74,7 @@ class GameController extends AbstractController
     /**
      * @Route("/games/{id}/join", name="joinGame")
      */
-    public function joinGame(Request $request, string $id): Response
+    public function joinGame(Request $request, string $id, PublisherInterface $publisher): Response
     {
         $playerHash = $request->cookies->get($this::COOKIE_KEY);
 
@@ -79,6 +102,7 @@ class GameController extends AbstractController
             }
             $entityManager->flush();
         }
+        $this->notify($publisher, $game->getId());
 
 
 
@@ -89,6 +113,7 @@ class GameController extends AbstractController
                 "id" => $game->getId()
             ]
         );
+
         // With the $playerHash as cookie !
         $response->headers->setCookie(new Cookie($this::COOKIE_KEY, $playerHash));
         return $response;
@@ -116,7 +141,7 @@ class GameController extends AbstractController
         // Now we need to get if this user is player1, 2 or if he doesn't play.
         $yourValue = $this->gameService->getPlayerValue($game, $playerHash);
 
-        return $this->render('game/index.html.twig', [
+        $response = $this->render('game/index.html.twig', [
             'board' => $game->getBoard(),
             'status' => $game->getStatus(),
             'winner' => $game->getWinner(),
@@ -128,6 +153,8 @@ class GameController extends AbstractController
             'action' =>  $action,
             'method' => 'POST',
         ]);
+
+        return $response;
     }
 
     /**
@@ -135,7 +162,7 @@ class GameController extends AbstractController
      * Add a marble to the board
      */
 
-    public function addMarble(Request $request, string $id): Response
+    public function addMarble(Request $request, string $id, PublisherInterface $publisher): Response
     {
         $playerHash = $request->cookies->get($this::COOKIE_KEY);
 
@@ -167,6 +194,8 @@ class GameController extends AbstractController
         $game = $this->gameService->addMarbleIfPositionIsValid($game, $position);
         $entityManager->flush();
 
+        $this->notify($publisher, $game->getId());
+
         return $this->redirectToRoute('game', ["id" => $game->getId()]);
     }
 
@@ -175,7 +204,7 @@ class GameController extends AbstractController
      * Add a marble to the board
      */
 
-    public function rotateQuarter(Request $request, string $id): Response
+    public function rotateQuarter(Request $request, string $id, PublisherInterface $publisher): Response
     {
         $playerHash = $request->cookies->get($this::COOKIE_KEY);
 
@@ -197,6 +226,8 @@ class GameController extends AbstractController
         $game = $this->gameService->rotateQuarterBy90Degrees($game, $rotationKey);
 
         $entityManager->flush();
+
+        $this->notify($publisher, $game->getId());
 
         return $this->redirectToRoute('game', ["id" => $game->getId()]);
     }
