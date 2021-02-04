@@ -21,10 +21,15 @@
 
 {% block javascripts %}
 	{% if status == constant('App\\Service\\GameService::GAME_WAITING_OPPONENT') or isYourTurn == false and status != constant('App\\Service\\GameService::GAME_FINISHED')%}
-		<script type="text/javascript">
-			window.setTimeout(() => {
+		<script>
+			// URL is a built-in JavaScript class to manipulate URLs
+			const url = new URL("{{ MERCURE_PUBLISH_URL }}");
+			url.searchParams.append('topic', '{{ app.request.uri }}');
+
+			const eventSource = new EventSource(url);
+			eventSource.onmessage = event => {
 				window.location.reload();
-			}, 5000);
+			}
 		</script>
 	{% endif %}
 

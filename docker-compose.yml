@@ -25,5 +25,15 @@ services:
     restart: always
     ports:
       - 8081:8080
+
+  mercure:
+    # In production, you may want to use the managed version of Mercure, https://mercure.rocks
+    image: dunglas/mercure
+    command: caddy run -config /etc/caddy/Caddyfile.dev # Enable demo mode
+    env_file:
+      - .env.local # configure mercure
+    ports:
+      - 8082:80
+      - 443:433
 volumes:
   database-data:
