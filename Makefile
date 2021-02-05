@@ -24,7 +24,8 @@ stop: ## Stop containers in dev environment
 install-prod: init-env ## Install dependencies using composer in prod
 	$(DOCKER_COMPOSE_PROD) build
 	$(DOCKER_COMPOSE_PROD) run --rm symfony bash -ci 'composer update'
-	$(DOCKER_COMPOSE_PROD) run --rm symfony bash -ci 'composer install'
+	$(DOCKER_COMPOSE_PROD) run --rm symfony bash -ci 'composer install --no-dev --optimize-autoloader'
+	$(DOCKER_COMPOSE_PROD) run --rm symfony bash -ci 'php bin/console cache:clear'
 
 start-prod: ## Start containers in prod environment
 	$(DOCKER_COMPOSE_PROD) up -d --force-recreate
