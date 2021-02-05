@@ -1,3 +1,6 @@
+DOCKER_COMPOSE_DEV=docker-compose -f docker-compose.yml -f docker-compose.dev.yml
+DOCKER_COMPOSE_PROD=docker-compose -f docker-compose.yml -f docker-compose.prod.yml
+
 help: ## Display available commands
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
@@ -6,43 +9,46 @@ init-env: ## Create .env.local for your purpose.
 
 
 install: init-env ## Install dependencies using composer
-	docker-compose build
-	docker-compose run --rm symfony bash -ci 'composer update'
-	docker-compose run --rm symfony bash -ci 'composer install'
+	$(DOCKER_COMPOSE_DEV) build
+	$(DOCKER_COMPOSE_DEV) run --rm symfony bash -ci 'composer update'
+	$(DOCKER_COMPOSE_DEV) run --rm symfony bash -ci 'composer install'
 
 
 start: ## Start containers in dev environment
-	docker-compose up --force-recreate -d
+	$(DOCKER_COMPOSE_DEV) up --force-recreate -d
 
 
 stop: ## Stop containers in dev environment
-	docker-compose down
+	$(DOCKER_COMPOSE_DEV) down
 
 install-prod: init-env ## Install dependencies using composer in prod
-	docker-compose -f docker-compose.yml -f docker-compose.prod.yml build
-	docker-compose -f docker-compose.yml -f docker-compose.prod.yml run --rm symfony bash -ci 'composer update'
-	docker-compose -f docker-compose.yml -f docker-compose.prod.yml run --rm symfony bash -ci 'composer install'
+	$(DOCKER_COMPOSE_PROD) build
+	$(DOCKER_COMPOSE_PROD) run --rm symfony bash -ci 'composer update'
+	$(DOCKER_COMPOSE_PROD) run --rm symfony bash -ci 'composer install'
 
 start-prod: ## Start containers in prod environment
-	docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --force-recreate
+	$(DOCKER_COMPOSE_PROD) up -d --force-recreate
 
 stop-prod: ## Stop containers in prod environment
-	docker-compose -f docker-compose.yml -f docker-compose.prod.yml down
+	$(DOCKER_COMPOSE_PROD) down
 
 test: ## Run phpunit test
-	docker-compose run symfony bash -ci 'php bin/phpunit tests'
+	$(DOCKER_COMPOSE_DEV) run symfony bash -ci 'php bin/phpunit tests'
 
 create-db: ## Create database
-	docker-compose run symfony bash -ci 'php bin/console doctrine:database:create --if-not-exists'
+	$(DOCKER_COMPOSE_DEV) run symfony bash -ci 'php bin/console doctrine:database:create --if-not-exists'
 
 create-migration: ## Create migration for doctrine
-	docker-compose run symfony bash -ci 'php bin/console make:migration'
+	$(DOCKER_COMPOSE_DEV) run symfony bash -ci 'php bin/console make:migration'
 
 migrate: ## Execute pending migrations
-	docker-compose run symfony bash -ci 'php bin/console doctrine:migrations:migrate' --no-interaction
+	$(DOCKER_COMPOSE_DEV) run symfony bash -ci 'php bin/console doctrine:migrations:migrate' --no-interaction
+
+migrate-prod: ## Execute pending migrations
+	$(DOCKER_COMPOSE_PROD) run symfony bash -ci 'php bin/console doctrine:migrations:migrate' --no-interaction
 
 connect-db:	## Connect to database container (useful for debugging)
-	docker-compose exec database psql pentago
+	$(DOCKER_COMPOSE_DEV) exec database psql pentago
 
 deploy: ## Deploy on amazon EC2
 	rsync --delete -r -e "ssh -i ${key}" --filter=':- .gitignore' \
@@ -51,5 +57,5 @@ deploy: ## Deploy on amazon EC2
 	'cd pentago &&\
 	make install-prod &&\
 	make start-prod &&\
-	make migrate'
+	make migrate-prod'
 
