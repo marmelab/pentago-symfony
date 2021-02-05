@@ -28,7 +28,25 @@
 
 			const eventSource = new EventSource(url);
 			eventSource.onmessage = event => {
-				window.location.reload();
+				const data = JSON.parse(event.data);
+				switch (data.status) {
+					case "add_marble":
+					 document.querySelector(`button[value="${data.value.position}"] .marble`).classList.add(`animate-marble`);
+					 document.querySelector(`button[value="${data.value.position}"] .marble`).classList.add(`player-bg--${data.value.playerValue}`);
+					break;
+					case "rotate_quarter":
+						const directionAnimation = data.value % 2 === 0 ? 'counter-clockwise' : 'clockwise';
+						const quarter = Math.floor(data.value / 2) + 1;
+						document.querySelector(`#quarter-${quarter}`).classList.add(`transform-quarter--${quarter}--${directionAnimation}`);
+
+						setTimeout(() => {
+							window.location.reload();
+						}, 2500);
+						break;
+					default:
+						window.location.reload();
+					break;
+				}
 			}
 		</script>
 	{% endif %}
