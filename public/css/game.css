@@ -64,7 +64,7 @@
   height: 50px;
   border-radius: 50%;
   margin: auto;
-  transition: 0.2s ease all;
+  transition: 0.2s ease background-color;
   background-color: var(--empty-color);
 }
 
