@@ -95,6 +95,7 @@ class GameController extends AbstractController
                 // If this game has no player 1 (this case is impossible in theory but for debugging purpose it's useful)
                 // Set this player as player 1
                 $game->setPlayer1Hash($playerHash);
+                $game->setCurrentPlayerHash($playerHash);
             } elseif ($playerHash !== $game->getPlayer1Hash() && $game->getPlayer2Hash() === null) {
                 // If game has no player 2
                 // Start this game !
