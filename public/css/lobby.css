@@ -24,9 +24,15 @@
 }
 
 .lobby__games-item {
-  width: 120px;
+  width: 90%;
   padding: 20px;
   margin: 10px;
   border: 1px solid var(--white);
   text-align: center;
+}
+
+@media screen and (min-width: 400px) {
+  .lobby__games-item {
+    width: 120px;
+  }
 }

@@ -1,5 +1,10 @@
+.home__container {
+  max-width: 600px;
+  width: 90%;
+  margin: auto;
+}
 .home__illu {
-  width: 50%;
+  width: 100%;
   max-width: 450px;
   margin: 60px auto;
   display: block;
@@ -7,8 +12,8 @@
 
 .home__links {
   display: flex;
-  max-width: 600px;
-  width: 90%;
+  max-width: 400px;
+  width: 100%;
   margin: 40px auto;
   align-items: center;
   justify-content: space-around;
