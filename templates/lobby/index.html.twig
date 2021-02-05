@@ -16,7 +16,7 @@
     <ul class="lobby__games-list">
         {% for game in games %}
             <li class="lobby__games-item">
-                <h3>{{game.created | date("m/d/Y H:i")}}</h3>
+                <h3>{{game.created | date("m/d/Y H:i", "Europe/Paris")}}</h3>
                 <a href="{{path('joinGame', { 'id': game.id }) }}" class="button secondary">Join</a>
             </li>
         {% endfor %}

@@ -1,6 +1,6 @@
 .waiting-opponent {
   max-width: 500px;
-  width: 80%;
+  width: 90%;
   margin: auto;
   margin-top: 60px;
 }
@@ -9,7 +9,8 @@
   display: block;
   margin: 40px auto;
   border-radius: 40px;
-  width: 400px;
+  max-width: 400px;
+  width: 90%;
 }
 
 .waiting-opponent__input {
@@ -17,11 +18,10 @@
   background-color: var(--main-bg-color);
   border: 1px solid white;
   padding: 12px;
-  font-size: 1.2em;
+  font-size: 0.9em;
   border-radius: 4px;
-
   text-align: center;
-  width: 100%;
+  width: 90%;
   color: white;
   outline: none;
 }

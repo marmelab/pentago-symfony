@@ -2,15 +2,27 @@
 <html>
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{% block title %}Pentago !{% endblock %}</title>
 
         {% block stylesheets %}
             <link href="{{ asset('css/main.css') }}" rel="stylesheet"/>
+            <link rel="preconnect" href="https://fonts.gstatic.com">
+            <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500&display=swap" rel="stylesheet"> 
         {% endblock %}
 
         {% block javascripts %}{% endblock %}
     </head>
     <body>
+        <nav>
+            <div class="nav-logo">
+                Pentagony
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-menu__item"><a href="{{ path('home') }}" class="nav-item__link">Home</a></li>
+                <li class="nav-menu__item"><a href="{{ path('lobby') }}" class="nav-item__link">Lobby</a></li>
+            </ul>
+        </nav>
         {% block body %}{% endblock %}
     </body>
 </html>
