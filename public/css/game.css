@@ -18,7 +18,20 @@
 .board {
   position: relative;
   margin: auto;
+  margin-top: 40px;
   width: 420px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+}
+
+.board--opacity {
+  opacity: 0.6;
+}
+
+.board-quarter {
+  transition: 1s ease transform;
+  margin: 2px;
 }
 
 .row {
@@ -77,14 +90,6 @@
 .row:nth-child(6) > .cell:nth-child(3),
 .row:nth-child(6) > .cell:last-child {
   border-bottom-right-radius: var(--quarter-radius);
-}
-
-.row:nth-child(3) > .cell {
-  margin-bottom: 3px;
-}
-
-.cell:nth-child(3) {
-  margin-right: 3px;
 }
 
 .player-color--1 {
@@ -147,4 +152,206 @@
 
 .icon--inversed {
   transform: rotateY(180deg);
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-marble {
+  animation: popIn 1s ease-in-out;
+}
+
+@keyframes rotateQuarter1ClockWise {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  30% {
+    transform: translate(-30px, -30px) rotate(0deg);
+  }
+
+  60% {
+    transform: translate(-30px, -30px) rotate(90deg);
+  }
+
+  100% {
+    transform: translate(0, 0) rotate(90deg);
+  }
+}
+
+@keyframes rotateQuarter1CounterClockWise {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  30% {
+    transform: translate(-30px, -30px) rotate(0deg);
+  }
+
+  60% {
+    transform: translate(-30px, -30px) rotate(-90deg);
+  }
+
+  100% {
+    transform: translate(0, 0) rotate(-90deg);
+  }
+}
+
+.transform-quarter--1--clockwise {
+  animation: rotateQuarter1ClockWise 2s ease;
+  animation-fill-mode: forwards;
+}
+
+.transform-quarter--1--counter-clockwise {
+  animation: rotateQuarter1CounterClockWise 2s ease;
+  animation-fill-mode: forwards;
+}
+
+@keyframes rotateQuarter2ClockWise {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  30% {
+    transform: translate(30px, -30px) rotate(0deg);
+  }
+
+  60% {
+    transform: translate(30px, -30px) rotate(90deg);
+  }
+
+  100% {
+    transform: translate(0, 0) rotate(90deg);
+  }
+}
+
+@keyframes rotateQuarter2CounterClockWise {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  30% {
+    transform: translate(30px, -30px) rotate(0deg);
+  }
+
+  60% {
+    transform: translate(30px, -30px) rotate(-90deg);
+  }
+
+  100% {
+    transform: translate(0, 0) rotate(-90deg);
+  }
+}
+
+.transform-quarter--2--clockwise {
+  animation: rotateQuarter2ClockWise 2s ease;
+  animation-fill-mode: forwards;
+}
+
+.transform-quarter--2--counter-clockwise {
+  animation: rotateQuarter2CounterClockWise 2s ease;
+  animation-fill-mode: forwards;
+}
+
+@keyframes rotateQuarter3ClockWise {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  30% {
+    transform: translate(30px, 30px) rotate(0deg);
+  }
+
+  60% {
+    transform: translate(30px, 30px) rotate(90deg);
+  }
+
+  100% {
+    transform: translate(0, 0) rotate(90deg);
+  }
+}
+
+@keyframes rotateQuarter3CounterClockWise {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  30% {
+    transform: translate(30px, 30px) rotate(0deg);
+  }
+
+  60% {
+    transform: translate(30px, 30px) rotate(-90deg);
+  }
+
+  100% {
+    transform: translate(0, 0) rotate(-90deg);
+  }
+}
+
+.transform-quarter--3--clockwise {
+  animation: rotateQuarter3ClockWise 2s ease;
+  animation-fill-mode: forwards;
+}
+
+.transform-quarter--3--counter-clockwise {
+  animation: rotateQuarter3CounterClockWise 2s ease;
+  animation-fill-mode: forwards;
+}
+
+@keyframes rotateQuarter4ClockWise {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  30% {
+    transform: translate(-30px, 30px) rotate(0deg);
+  }
+
+  60% {
+    transform: translate(-30px, 30px) rotate(90deg);
+  }
+
+  100% {
+    transform: translate(0, 0) rotate(90deg);
+  }
+}
+
+@keyframes rotateQuarter4CounterClockWise {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  30% {
+    transform: translate(-30px, 30px) rotate(0deg);
+  }
+
+  60% {
+    transform: translate(-30px, 30px) rotate(-90deg);
+  }
+
+  100% {
+    transform: translate(0, 0) rotate(-90deg);
+  }
+}
+
+.transform-quarter--4--clockwise {
+  animation: rotateQuarter4ClockWise 2s ease;
+  animation-fill-mode: forwards;
+}
+
+.transform-quarter--4--counter-clockwise {
+  animation: rotateQuarter4CounterClockWise 2s ease;
+  animation-fill-mode: forwards;
 }

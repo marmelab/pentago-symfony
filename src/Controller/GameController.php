@@ -29,7 +29,7 @@ class GameController extends AbstractController
         $this->playerService = $playerService;
     }
 
-    public function notify(PublisherInterface $publisher, UuidV4 $gameId)
+    public function notify(PublisherInterface $publisher, UuidV4 $gameId, array $params)
     {
         // Front end side, we listen events from Mercure hub on DOMAIN/games/id.
         // Generate this URL : 
@@ -40,7 +40,7 @@ class GameController extends AbstractController
         // Create an Update object
         $update = new Update(
             $url,
-            'OK' // The body, unused at this time
+            json_encode(["status" => $params["status"], "value" => $params["value"]])
         );
 
         // The Publisher service is an invokable object
@@ -102,7 +102,7 @@ class GameController extends AbstractController
             }
             $entityManager->flush();
         }
-        $this->notify($publisher, $game->getId());
+        $this->notify($publisher, $game->getId(), ["status" => "join", "value" => null]);
 
 
 
@@ -181,10 +181,10 @@ class GameController extends AbstractController
             return $this->redirectToRoute('game', ["id" => $game->getId()]);
         }
 
-        $position = $request->get('position');
+        $requestPosition = $request->get('position');
 
         // Value are stored like "x-y".
-        $position = explode('-', $position);
+        $position = explode('-', $requestPosition);
 
         // Using loop.index in twig make it start to 1 instead of 0.
         // We need to remove 1 to each positions.
@@ -193,8 +193,15 @@ class GameController extends AbstractController
 
         $game = $this->gameService->addMarbleIfPositionIsValid($game, $position);
         $entityManager->flush();
-
-        $this->notify($publisher, $game->getId());
+        $currentPlayerValue = $this->gameService->getPlayerValue($game, $playerHash);
+        $this->notify(
+            $publisher,
+            $game->getId(),
+            [
+                "status" => $this->gameService::ADD_MARBLE_STATUS,
+                "value" => ["position" => $requestPosition, "playerValue" => $currentPlayerValue]
+            ]
+        );
 
         return $this->redirectToRoute('game', ["id" => $game->getId()]);
     }
@@ -227,7 +234,7 @@ class GameController extends AbstractController
 
         $entityManager->flush();
 
-        $this->notify($publisher, $game->getId());
+        $this->notify($publisher, $game->getId(), ["status" => $this->gameService::ROTATE_QUARTER_STATUS, "value" => $rotationKey]);
 
         return $this->redirectToRoute('game', ["id" => $game->getId()]);
     }

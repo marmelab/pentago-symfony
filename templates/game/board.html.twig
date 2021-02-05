@@ -10,16 +10,51 @@
     loop.parent be able to access to the first loop object.
     #}
 
-    <div class="board">
-        {% for row in board %}
-            <div class="row">
-                {% for value in row %}
-                    <button type="submit" name="position" {% if status != constant('App\\Service\\GameService::GAME_STARTED') or isYourTurn == false or turnStatus == constant('App\\Service\\GameService::ROTATE_QUARTER_STATUS') or value != 0 %} disabled="disabled" {% endif %} value="{{loop.parent.loop.index}}-{{loop.index}}" class="cell">
-                        <div class="marble player-bg--{{value}} {% if [loop.parent.loop.index - 1, loop.index - 1] in allAlignedPositions %}aligned{% endif %}"></div>
-                    </button>
-                {% endfor %}
-            </div>
-        {% endfor %}
+    <div class="board {% if status == constant('App\\Service\\GameService::GAME_STARTED') and isYourTurn == false %} board--opacity {% endif %}">
+        <div class="board-quarter" id="quarter-1">
+            {% for row in board | slice(0, 3) %}
+                <div class="row">
+                    {% for value in row | slice(0, 3) %}
+                        <button type="submit" name="position" {% if status != constant('App\\Service\\GameService::GAME_STARTED') or isYourTurn == false or turnStatus == constant('App\\Service\\GameService::ROTATE_QUARTER_STATUS') or value != 0 %} disabled="disabled" {% endif %} value="{{loop.parent.loop.index}}-{{loop.index}}" class="cell">
+                            <div class="marble player-bg--{{value}} {% if [loop.parent.loop.index - 1, loop.index - 1] in allAlignedPositions %}aligned{% endif %}"></div>
+                        </button>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="board-quarter" id="quarter-2">
+            {% for row in board | slice(0, 3) %}
+                <div class="row">
+                    {% for value in row | slice(3, 3) %}
+                        <button type="submit" name="position" {% if status != constant('App\\Service\\GameService::GAME_STARTED') or isYourTurn == false or turnStatus == constant('App\\Service\\GameService::ROTATE_QUARTER_STATUS') or value != 0 %} disabled="disabled" {% endif %} value="{{loop.parent.loop.index}}-{{3 + loop.index}}" class="cell">
+                            <div class="marble player-bg--{{value}} {% if [loop.parent.loop.index - 1, 3 +loop.index - 1] in allAlignedPositions %}aligned{% endif %}"></div>
+                        </button>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="board-quarter" id="quarter-4">
+            {% for row in board | slice(3, 3) %}
+                <div class="row">
+                    {% for value in row | slice(0, 3) %}
+                        <button type="submit" name="position" {% if status != constant('App\\Service\\GameService::GAME_STARTED') or isYourTurn == false or turnStatus == constant('App\\Service\\GameService::ROTATE_QUARTER_STATUS') or value != 0 %} disabled="disabled" {% endif %} value="{{3 + loop.parent.loop.index}}-{{loop.index}}" class="cell">
+                            <div class="marble player-bg--{{value}} {% if [3 + loop.parent.loop.index - 1, loop.index - 1] in allAlignedPositions %}aligned{% endif %}"></div>
+                        </button>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="board-quarter" id="quarter-3">
+            {% for row in board | slice(3, 3) %}
+                <div class="row">
+                    {% for value in row | slice(3, 3) %}
+                        <button type="submit" name="position" {% if status != constant('App\\Service\\GameService::GAME_STARTED') or isYourTurn == false or turnStatus == constant('App\\Service\\GameService::ROTATE_QUARTER_STATUS') or value != 0 %} disabled="disabled" {% endif %} value="{{3 + loop.parent.loop.index}}-{{3 + loop.index}}" class="cell">
+                            <div class="marble player-bg--{{value}} {% if [3 + loop.parent.loop.index - 1, 3 + loop.index - 1] in allAlignedPositions %}aligned{% endif %}"></div>
+                        </button>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
         {% if status == constant('App\\Service\\GameService::GAME_STARTED') and isYourTurn and turnStatus == constant('App\\Service\\GameService::ROTATE_QUARTER_STATUS') %}
             <div class="rotate-controls-overlay">
                 <div class="rotate-controls-quarter">
