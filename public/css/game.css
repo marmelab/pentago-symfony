@@ -25,8 +25,19 @@
   grid-template-rows: repeat(2, 1fr);
 }
 
+@keyframes opacity {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0.6;
+  }
+}
+
 .board--opacity {
-  opacity: 0.6;
+  animation: opacity 0.3s ease 1s;
+  animation-fill-mode: forwards;
 }
 
 .board-quarter {
