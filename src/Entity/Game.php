@@ -24,14 +24,14 @@ class Game
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\ManyToOne(targetEntity="Player", cascade={"all"}, fetch="EAGER")
      */
-    private $player1_hash;
+    private $player1;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\ManyToOne(targetEntity="Player", cascade={"all"}, fetch="EAGER")
      */
-    private $player2_hash;
+    private $player2;
 
     /**
      * @ORM\Column(type="json")
@@ -49,9 +49,9 @@ class Game
     private $status;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="uuid", unique=true, nullable=true)
      */
-    private $currentPlayerHash;
+    private $currentPlayer;
 
     /**
      * @ORM\Column(type="json", nullable=true)
@@ -74,26 +74,26 @@ class Game
         return $this->id;
     }
 
-    public function getPlayer1Hash(): ?string
+    public function getPlayer1(): ?Player
     {
-        return $this->player1_hash;
+        return $this->player1;
     }
 
-    public function setPlayer1Hash(?string $player1_hash): self
+    public function setPlayer1(?Player $player1): self
     {
-        $this->player1_hash = $player1_hash;
+        $this->player1 = $player1;
 
         return $this;
     }
 
-    public function getPlayer2Hash(): ?string
+    public function getPlayer2(): ?Player
     {
-        return $this->player2_hash;
+        return $this->player2;
     }
 
-    public function setPlayer2Hash(?string $player2_hash): self
+    public function setPlayer2(?string $player2): self
     {
-        $this->player2_hash = $player2_hash;
+        $this->player2 = $player2;
 
         return $this;
     }
@@ -134,14 +134,14 @@ class Game
         return $this;
     }
 
-    public function getCurrentPlayerHash(): ?string
+    public function getCurrentPlayer(): ?UuidV4
     {
-        return $this->currentPlayerHash;
+        return $this->currentPlayer;
     }
 
-    public function setCurrentPlayerHash(?string $currentPlayerHash): self
+    public function setCurrentPlayer(?string $currentPlayer): self
     {
-        $this->currentPlayerHash = $currentPlayerHash;
+        $this->currentPlayer = $currentPlayer;
 
         return $this;
     }
