@@ -36,7 +36,7 @@ class GameController extends AbstractController
     public function notify(PublisherInterface $publisher, UuidV4 $gameId, array $params)
     {
         // Front end side, we listen events from Mercure hub on DOMAIN/games/id.
-        // Generate this URL : 
+        // Generate this URL :
         $url =  $this->generateUrl('game_view', [
             'id' => $gameId,
         ], UrlGeneratorInterface::ABSOLUTE_URL);
@@ -101,11 +101,11 @@ class GameController extends AbstractController
         // If game is not started yet, we waiting for players !
         if (!$this->gameService->isStarted($game)) {
             if ($game->getPlayer1() === null) {
-                // If this game has no player 1 (this case is impossible in theory but for debugging purpose it's useful)
+                // If this game has no player 1
+                // (this case is impossible in theory but for debugging purpose it's useful)
                 // Set this player as player 1
                 $game->setPlayer1($player);
-            } elseif (
-                $player !== $game->getPlayer1() &&
+            } elseif ($player !== $game->getPlayer1() &&
                 $game->getPlayer2() === null
             ) {
                 // If game has no player 2
@@ -155,8 +155,7 @@ class GameController extends AbstractController
         }
 
 
-        if (
-            $game->getStatus() === $this->gameService::GAME_WAITING_OPPONENT ||
+        if ($game->getStatus() === $this->gameService::GAME_WAITING_OPPONENT ||
             $game->getCurrentPlayerHash() !== $playerHash
         ) {
             return $this->redirectToRoute('game', ["id" => $game->getId()]);
@@ -215,7 +214,14 @@ class GameController extends AbstractController
 
         $entityManager->flush();
 
-        $this->notify($publisher, $game->getId(), ["status" => $this->gameService::ROTATE_QUARTER_STATUS, "value" => $rotationKey]);
+        $this->notify(
+            $publisher,
+            $game->getId(),
+            [
+                "status" => $this->gameService::ROTATE_QUARTER_STATUS,
+                "value" => $rotationKey
+            ]
+        );
 
         return $this->redirectToRoute('game', ["id" => $game->getId()]);
     }

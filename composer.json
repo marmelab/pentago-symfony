@@ -49,6 +49,7 @@
         "twig/twig": "^2.12|^3.0"
     },
     "require-dev": {
+        "squizlabs/php_codesniffer": "*",
         "symfony/browser-kit": "^5.2",
         "symfony/css-selector": "^5.2",
         "symfony/debug-bundle": "^5.2",

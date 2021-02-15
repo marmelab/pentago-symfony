@@ -86,7 +86,6 @@ class GameService
         $board = $game->getBoard();
 
         if ($this->boardService->isPositionAvailable($board, $position) === true) {
-
             $value = $this->getCurrentPlayerValue($game);
 
             $board = $this->boardService->addMarble($board, $position, $value);
@@ -111,7 +110,7 @@ class GameService
             |───+───|
             | 4 | 3 |
         7 ↻ └───+───┘ 4 ↺
-            6 ↺  5 ↻ 
+            6 ↺  5 ↻
         */
 
         $board = $game->getBoard();
@@ -123,7 +122,7 @@ class GameService
         */
         $direction = $rotationKey % 2 == 0 ? -1 : 1;
 
-        /* 
+        /*
             From the board, extract one of the quarter by giving rotationKey
             Each quarter have 2 rotations key, to determine which quarter we choose, use euclidean division.
             $quarter will contain a 3*3 matrix + boundaries where he come from.

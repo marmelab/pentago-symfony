@@ -4,9 +4,11 @@ namespace App\Dto;
 
 use App\Entity\Game;
 
-class GameDto {
+class GameDto
+{
 
-    public function __construct(Game $game) {
+    public function __construct(Game $game)
+    {
         $this->id = $game->getId();
         $this->currentPlayer = $game->getCurrentPlayer();
         $this->status = $game->getStatus();

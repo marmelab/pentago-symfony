@@ -23,7 +23,10 @@ class LobbyController extends AbstractController
      */
     public function index(): Response
     {
-        $games = $this->gameRepository->findBy(['status' => $this->gameService::GAME_WAITING_OPPONENT], ['created' => 'DESC']);
+        $games = $this->gameRepository->findBy(
+            ['status' => $this->gameService::GAME_WAITING_OPPONENT],
+            ['created' => 'DESC']
+        );
 
         return $this->render('lobby/index.html.twig', [
             'games' => $games,

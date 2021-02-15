@@ -16,7 +16,10 @@ class BoardService
 
     public function isOutsideBoard(array $position): bool
     {
-        if ($position[0] < 0 || $position[0] >= self::BOARD_LENGTH || $position[1] < 0 || $position[1] >= self::BOARD_LENGTH) {
+        if ($position[0] < 0 ||
+            $position[0] >= self::BOARD_LENGTH ||
+            $position[1] < 0 ||
+            $position[1] >= self::BOARD_LENGTH) {
             return true;
         }
 
@@ -114,7 +117,7 @@ class BoardService
     {
         /*
             If you reverse a matrix and tranpose it, you will obtain a -90deg rotation (counter clockwise).
-            If you transpose it first and reverse it after, you will obtain a 90deg rotation (clockwise). 
+            If you transpose it first and reverse it after, you will obtain a 90deg rotation (clockwise).
         */
         if ($direction === -1) {
             $matrix = array_map('array_reverse', $matrix);
