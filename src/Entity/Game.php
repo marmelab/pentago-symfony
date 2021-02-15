@@ -49,7 +49,7 @@ class Game
     private $status;
 
     /**
-     * @ORM\Column(type="uuid", unique=true, nullable=true)
+     * @ORM\ManyToOne(targetEntity="Player", cascade={"all"}, fetch="EAGER")
      */
     private $currentPlayer;
 
@@ -91,7 +91,7 @@ class Game
         return $this->player2;
     }
 
-    public function setPlayer2(?string $player2): self
+    public function setPlayer2(?Player $player2): self
     {
         $this->player2 = $player2;
 
@@ -134,12 +134,12 @@ class Game
         return $this;
     }
 
-    public function getCurrentPlayer(): ?UuidV4
+    public function getCurrentPlayer(): ?Player
     {
         return $this->currentPlayer;
     }
 
-    public function setCurrentPlayer(?string $currentPlayer): self
+    public function setCurrentPlayer(?Player $currentPlayer): self
     {
         $this->currentPlayer = $currentPlayer;
 

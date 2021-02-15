@@ -11,11 +11,15 @@ use Symfony\Component\Mercure\PublisherInterface;
 use Symfony\Component\Mercure\Update;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Uid\UuidV4;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 use App\Entity\Game;
+use App\Entity\Player;
 use App\Service\GameService;
 use App\Service\PlayerService;
 use App\Service\MercureCookieService;
+
+use App\Dto\GameDto;
 
 class GameController extends AbstractController
 {
@@ -33,7 +37,7 @@ class GameController extends AbstractController
     {
         // Front end side, we listen events from Mercure hub on DOMAIN/games/id.
         // Generate this URL : 
-        $url =  $this->generateUrl('game', [
+        $url =  $this->generateUrl('game_view', [
             'id' => $gameId,
         ], UrlGeneratorInterface::ABSOLUTE_URL);
 
@@ -48,113 +52,89 @@ class GameController extends AbstractController
     }
 
     /**
-     * @Route("/game/create", name="newGame")
+     * @Route("/games", name="game_create", methods={"POST"})
      */
-    public function newGame(): Response
+    public function newGame(request $request): Response
     {
 
-        $entityManager = $this->getDoctrine()->getManager();
-        $playerHash = $this->playerService->generatePlayerHash();
-        $game = $this->gameService->initGame($playerHash);
+        $content = $request->toArray();
+        if (!$content || !$content["playerId"]) {
+            return new JsonResponse("Id is required", 400);
+        }
+        $playerId = $content["playerId"];
 
+        $playerRepository = $this->getDoctrine()->getRepository(Player::class);
+        $player = $playerRepository->find($playerId);
+
+        
+        $game = $this->gameService->initGame($player);
+        
+        $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($game);
         $entityManager->flush();
 
-        $response = $this->redirectToRoute(
-            'game',
-            [
-                "id" => $game->getId()
-            ]
-        );
-        $response->headers->setCookie(new Cookie($this::COOKIE_KEY, $playerHash));
-
+        $response = new JsonResponse(new GameDto($game));
+        $response->headers->set('Access-Control-Allow-Origin', '*');
         return $response;
     }
 
     /**
-     * @Route("/games/{id}/join", name="joinGame")
+     * @Route("/games/{id}/join", name="game_join", methods={"POST"})
      */
     public function joinGame(Request $request, string $id, PublisherInterface $publisher): Response
     {
-        $playerHash = $request->cookies->get($this::COOKIE_KEY);
+        $content = $request->toArray();
+        if (!$content || !$content["playerId"]) {
+            return new JsonResponse("Id and playerId are required", 400);
+        }
+        $playerId = $content["playerId"];
+
 
         $entityManager = $this->getDoctrine()->getManager();
-
+        $player = $entityManager->getRepository(Player::class)->find($playerId);
         $game = $entityManager->getRepository(Game::class)->find($id);
+
         if (!$game) {
-            return $this->redirectToRoute('newGame');
+            return new JsonResponse("Game not found", 404);
         }
 
         // If game is not started yet, we waiting for players !
         if (!$this->gameService->isStarted($game)) {
-            if (!$playerHash) {
-                $playerHash = $this->playerService->generatePlayerHash();
-            }
-
-            if ($game->getPlayer1Hash() === null) {
+            if ($game->getPlayer1() === null) {
                 // If this game has no player 1 (this case is impossible in theory but for debugging purpose it's useful)
                 // Set this player as player 1
-                $game->setPlayer1Hash($playerHash);
-                $game->setCurrentPlayerHash($playerHash);
-            } elseif ($playerHash !== $game->getPlayer1Hash() && $game->getPlayer2Hash() === null) {
+                $game->setPlayer1($player);
+            } elseif (
+                $player !== $game->getPlayer1() &&
+                $game->getPlayer2() === null
+            ) {
                 // If game has no player 2
                 // Start this game !
-                $game = $this->gameService->setPlayer2AndStartGame($playerHash, $game);
+                $game = $this->gameService->setPlayer2AndStartGame($player, $game);
             }
             $entityManager->flush();
         }
         $this->notify($publisher, $game->getId(), ["status" => "join", "value" => null]);
 
-
-
-        // Anyway, player or not, we should redirect to this game
-        $response = $this->redirectToRoute(
-            'game',
-            [
-                "id" => $game->getId()
-            ]
-        );
-
-        // With the $playerHash as cookie !
-        $response->headers->setCookie(new Cookie($this::COOKIE_KEY, $playerHash));
+        $response = new JsonResponse(new GameDto($game));
+        $response->headers->set('Access-Control-Allow-Origin', '*');
         return $response;
     }
 
-    /**
-     * @Route("/games/{id}", name="game")
-     * Used to display the board
+   /**
+     * @Route("/games/{id}", name="game_view", methods={"GET"})
      */
-    public function game(Request $request, string $id): Response
+    public function game(string $id): Response
     {
-        $playerHash = $request->cookies->get($this::COOKIE_KEY);
-
         $entityManager = $this->getDoctrine()->getManager();
         $game = $entityManager->getRepository(Game::class)->find($id);
 
         if (!$game) {
-            return $this->redirectToRoute('newGame');
+            return new JsonResponse("Game not found", 404);
         }
 
-        $action = $game->getTurnStatus() === GameService::ADD_MARBLE_STATUS ?
-            $this->generateUrl('addMarble', ["id" => $game->getId()]) :
-            $this->generateUrl('rotateQuarter', ["id" => $game->getId()]);
-
-        // Now we need to get if this user is player1, 2 or if he doesn't play.
-        $yourValue = $this->gameService->getPlayerValue($game, $playerHash);
-
-        $response = $this->render('game/index.html.twig', [
-            'board' => $game->getBoard(),
-            'status' => $game->getStatus(),
-            'winner' => $game->getWinner(),
-            'allAlignedPositions' => $game->getAllAlignedPositions(),
-            'turnStatus' => $game->getTurnStatus(),
-            'isYourTurn' => $game->getCurrentPlayerHash() === $playerHash,
-            'yourValue' => $yourValue,
-            'isWitness' => !$yourValue,
-            'action' =>  $action,
-            'method' => 'POST',
-        ]);
-
+        $response = new JsonResponse(new GameDto($game));
+        $response->headers->set('Access-Control-Allow-Origin', '*');
         return $response;
     }
 
