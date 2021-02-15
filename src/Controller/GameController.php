@@ -4,15 +4,17 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mercure\PublisherInterface;
 use Symfony\Component\Mercure\Update;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Uid\UuidV4;
-use Symfony\Component\HttpFoundation\JsonResponse;
-
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Normalizer\UidNormalizer;
+use Symfony\Component\Serializer\Serializer;
 use App\Entity\Game;
 use App\Entity\Player;
 use App\Service\GameService;
@@ -31,6 +33,11 @@ class GameController extends AbstractController
     {
         $this->gameService = $gameService;
         $this->playerService = $playerService;
+
+        $encoders = [new JsonEncoder()];
+        $normalizers = [new UidNormalizer(), new ObjectNormalizer()];
+
+        $this->serializer = new Serializer($normalizers, $encoders);
     }
 
     public function notify(PublisherInterface $publisher, UuidV4 $gameId, array $params)
@@ -59,7 +66,7 @@ class GameController extends AbstractController
 
         $content = $request->toArray();
         if (!$content || !$content["playerId"]) {
-            return new JsonResponse("Id is required", 400);
+            return new Response("Id is required", 400);
         }
         $playerId = $content["playerId"];
 
@@ -73,7 +80,12 @@ class GameController extends AbstractController
         $entityManager->persist($game);
         $entityManager->flush();
 
-        $response = new JsonResponse(new GameDto($game));
+
+        $response = new Response(
+            $this->serializer->serialize($game, 'json'),
+            Response::HTTP_CREATED,
+            ['Content-type' => 'application/json']
+        );
         return $response;
     }
 
@@ -84,7 +96,7 @@ class GameController extends AbstractController
     {
         $content = $request->toArray();
         if (!$content || !$content["playerId"]) {
-            return new JsonResponse("Id and playerId are required", 400);
+            return new Response("Id and playerId are required", 400);
         }
         $playerId = $content["playerId"];
 
@@ -94,7 +106,7 @@ class GameController extends AbstractController
         $game = $entityManager->getRepository(Game::class)->find($id);
 
         if (!$game) {
-            return new JsonResponse("Game not found", 404);
+            return new Response("Game not found", 404);
         }
 
         // If game is not started yet, we waiting for players !
@@ -115,7 +127,11 @@ class GameController extends AbstractController
         }
         $this->notify($publisher, $game->getId(), ["status" => "join", "value" => null]);
 
-        $response = new JsonResponse(new GameDto($game));
+        $response = new Response(
+            $this->serializer->serialize($game, 'json'),
+            Response::HTTP_OK,
+            ['Content-type' => 'application/json']
+        );
         return $response;
     }
 
@@ -128,10 +144,15 @@ class GameController extends AbstractController
         $game = $entityManager->getRepository(Game::class)->find($id);
 
         if (!$game) {
-            return new JsonResponse("Game not found", 404);
+            return new Response("Game not found", 404);
         }
 
-        $response = new JsonResponse(new GameDto($game));
+        $response = new Response(
+            $this->serializer->serialize($game, 'json'),
+            Response::HTTP_OK,
+            ['Content-type' => 'application/json']
+        );
+
         return $response;
     }
 
