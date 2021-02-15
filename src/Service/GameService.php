@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Service\BoardService;
 use App\Service\WinDetectionService;
 use App\Entity\Game;
+use App\Entity\Player;
 
 class GameService
 {
@@ -23,14 +24,13 @@ class GameService
         $this->winDetectionService = $winDetectionService;
     }
 
-    public function initGame(string $player1Hash): Game
+    public function initGame(Player $player): Game
     {
         $game = new Game();
         $game->setBoard($this->boardService->initBoard());
         $game->setTurnStatus(self::ADD_MARBLE_STATUS);
         $game->setStatus(self::GAME_WAITING_OPPONENT);
-        $game->setPlayer1Hash($player1Hash);
-        $game->setCurrentPlayerHash($player1Hash);
+        $game->setPlayer1($player);
 
         return $game;
     }
@@ -41,11 +41,16 @@ class GameService
     }
 
     // Add new player as player2 and let's go to start this game !
-    public function setPlayer2AndStartGame(string $player2Hash, Game $game): Game
+    public function setPlayer2AndStartGame(Player $player, Game $game): Game
     {
-        $game->setPlayer2Hash($player2Hash);
+        $game->setPlayer2($player);
+        $randomNumber = rand(0, 1);
+        if ($randomNumber === 0) {
+            $game->setCurrentPlayer($game->getPlayer1());
+        } else {
+            $game->setCurrentPlayer($game->getPlayer2());
+        }
         $game->setStatus(self::GAME_STARTED);
-
         return $game;
     }
 
@@ -81,7 +86,6 @@ class GameService
         $board = $game->getBoard();
 
         if ($this->boardService->isPositionAvailable($board, $position) === true) {
-
             $value = $this->getCurrentPlayerValue($game);
 
             $board = $this->boardService->addMarble($board, $position, $value);
@@ -106,7 +110,7 @@ class GameService
             |───+───|
             | 4 | 3 |
         7 ↻ └───+───┘ 4 ↺
-            6 ↺  5 ↻ 
+            6 ↺  5 ↻
         */
 
         $board = $game->getBoard();
@@ -118,7 +122,7 @@ class GameService
         */
         $direction = $rotationKey % 2 == 0 ? -1 : 1;
 
-        /* 
+        /*
             From the board, extract one of the quarter by giving rotationKey
             Each quarter have 2 rotations key, to determine which quarter we choose, use euclidean division.
             $quarter will contain a 3*3 matrix + boundaries where he come from.

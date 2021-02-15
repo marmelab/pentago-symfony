@@ -34,7 +34,6 @@ class WinDetectionService
 
         // We need to loop 4 next values in direction.
         for ($i = 1; $i < self::WIN_CONDITION; $i++) {
-
             // Check the next position
             $currentPosition = array(
                 $startPosition[0] + ($i * $direction[0]),
@@ -63,8 +62,12 @@ class WinDetectionService
         );
     }
 
-    public function loopOverAllPossibilitiesForAlignmentInDirection(array $board, array $rangeRow, array $rangeCol, array $direction): array
-    {
+    public function loopOverAllPossibilitiesForAlignmentInDirection(
+        array $board,
+        array $rangeRow,
+        array $rangeCol,
+        array $direction
+    ): array {
         $results = array();
 
         foreach ($rangeRow as $row) {
@@ -101,7 +104,12 @@ class WinDetectionService
         $rangeRow = range(0, $this->boardService::BOARD_LENGTH);
         $rangeCol = range(0, self::WIN_CHECK_AREA);
         $direction = array(0, 1);
-        return $this->loopOverAllPossibilitiesForAlignmentInDirection($board, $rangeRow, $rangeCol, $direction);
+        return $this->loopOverAllPossibilitiesForAlignmentInDirection(
+            $board,
+            $rangeRow,
+            $rangeCol,
+            $direction
+        );
     }
 
     public function getAllColumnsAligned(array $board): array
@@ -122,13 +130,19 @@ class WinDetectionService
         $rangeRow = range(0, self::WIN_CHECK_AREA);
         $rangeCol = range(0, $this->boardService::BOARD_LENGTH);
         $direction = array(1, 0);
-        return $this->loopOverAllPossibilitiesForAlignmentInDirection($board, $rangeRow, $rangeCol, $direction);
+        return $this->loopOverAllPossibilitiesForAlignmentInDirection(
+            $board,
+            $rangeRow,
+            $rangeCol,
+            $direction
+        );
     }
 
     public function getAllDiagonalesAligned(array $board): array
     {
         /*
-        To check if we have a 5 marbles aligned in diagonales (from top-left to right-bottom), we only have to check following start positions.
+        To check if we have a 5 marbles aligned in diagonales
+        (from top-left to right-bottom), we only have to check following start positions.
 
         ┌─────────+─────────┐
         | x  x  ◯ | ◯  ◯  ◯ |
@@ -145,13 +159,19 @@ class WinDetectionService
         $rangeCol = range(0, self::WIN_CHECK_AREA);
         $direction = array(1, 1);
 
-        return $this->loopOverAllPossibilitiesForAlignmentInDirection($board, $rangeRow, $rangeCol, $direction);
+        return $this->loopOverAllPossibilitiesForAlignmentInDirection(
+            $board,
+            $rangeRow,
+            $rangeCol,
+            $direction
+        );
     }
 
     public function getAllReversedDiagonalesAligned(array $board): array
     {
         /*
-        Finally, to check if we have a 5 marbles aligned in reversed diagonales (from top-right to left-bottom), we only have to check following start positions.
+        Finally, to check if we have a 5 marbles aligned in reversed diagonales
+        (from top-right to left-bottom), we only have to check following start positions.
         ┌─────────+─────────┐
         | ◯  ◯  ◯ | ◯  x  x |
         | ◯  ◯  ◯ | ◯  x  x |
@@ -167,7 +187,12 @@ class WinDetectionService
         $rangeCol = range($this->boardService::BOARD_LENGTH - self::WIN_CHECK_AREA, $this->boardService::BOARD_LENGTH);
         $direction = array(1, -1);
 
-        return $this->loopOverAllPossibilitiesForAlignmentInDirection($board, $rangeRow, $rangeCol, $direction);
+        return $this->loopOverAllPossibilitiesForAlignmentInDirection(
+            $board,
+            $rangeRow,
+            $rangeCol,
+            $direction
+        );
     }
 
     public function getAllMarblesCombinationsCorrectlyAligned(array $board): array
@@ -204,7 +229,10 @@ class WinDetectionService
 
         foreach ($alignments as $alignment) {
             $results["winners"][$alignment["player"]] = true;
-            $results["allAlignedPositions"] = array_merge($results["allAlignedPositions"], $alignment["alignedPositions"]);
+            $results["allAlignedPositions"] = array_merge(
+                $results["allAlignedPositions"],
+                $alignment["alignedPositions"]
+            );
         }
 
         return $results;

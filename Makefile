@@ -7,6 +7,11 @@ help: ## Display available commands
 init-env: ## Create .env.local for your purpose.
 	cp -n ./.env.example .env.local
 
+autoformat: ## Auto format files
+	$(DOCKER_COMPOSE_DEV) run --rm symfony bash -ci 'php ./vendor/bin/phpcbf ./src'
+
+lint: ## Lint files
+	$(DOCKER_COMPOSE_DEV) run --rm symfony bash -ci 'php ./vendor/bin/phpcs ./src'
 
 install: init-env ## Install dependencies using composer
 	$(DOCKER_COMPOSE_DEV) build
