@@ -74,7 +74,6 @@ class GameController extends AbstractController
         $entityManager->flush();
 
         $response = new JsonResponse(new GameDto($game));
-        $response->headers->set('Access-Control-Allow-Origin', '*');
         return $response;
     }
 
@@ -117,7 +116,6 @@ class GameController extends AbstractController
         $this->notify($publisher, $game->getId(), ["status" => "join", "value" => null]);
 
         $response = new JsonResponse(new GameDto($game));
-        $response->headers->set('Access-Control-Allow-Origin', '*');
         return $response;
     }
 
@@ -134,7 +132,6 @@ class GameController extends AbstractController
         }
 
         $response = new JsonResponse(new GameDto($game));
-        $response->headers->set('Access-Control-Allow-Origin', '*');
         return $response;
     }
 

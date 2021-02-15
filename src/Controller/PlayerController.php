@@ -41,7 +41,6 @@ class PlayerController extends AbstractController
         
 
         $response = new JsonResponse(new PlayerDto($player));
-        $response->headers->set('Access-Control-Allow-Origin', '*');
         return $response;
     }
 }
