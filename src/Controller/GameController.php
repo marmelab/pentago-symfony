@@ -10,7 +10,7 @@ use Symfony\Component\Mercure\PublisherInterface;
 use Symfony\Component\Mercure\Update;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Uid\UuidV4;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Normalizer\UidNormalizer;
@@ -61,12 +61,12 @@ class GameController extends AbstractController
     /**
      * @Route("/games", name="game_create", methods={"POST"})
      */
-    public function newGame(request $request): Response
+    public function newGame(request $request): JsonResponse
     {
 
         $content = $request->toArray();
         if (!$content || !$content["playerId"]) {
-            return new Response("Id is required", 400);
+            return new JsonResponse("Id is required", JsonResponse::HTTP_BAD_REQUEST);
         }
         $playerId = $content["playerId"];
 
@@ -81,10 +81,9 @@ class GameController extends AbstractController
         $entityManager->flush();
 
 
-        $response = new Response(
+        $response = JsonResponse::fromJsonString(
             $this->serializer->serialize($game, 'json'),
-            Response::HTTP_CREATED,
-            ['Content-type' => 'application/json']
+            JsonResponse::HTTP_CREATED,
         );
         return $response;
     }
@@ -92,11 +91,11 @@ class GameController extends AbstractController
     /**
      * @Route("/games/{id}/join", name="game_join", methods={"POST"})
      */
-    public function joinGame(Request $request, string $id, PublisherInterface $publisher): Response
+    public function joinGame(Request $request, string $id, PublisherInterface $publisher): JsonResponse
     {
         $content = $request->toArray();
         if (!$content || !$content["playerId"]) {
-            return new Response("Id and playerId are required", 400);
+            return new JsonResponse("Id and playerId are required", JsonResponse::HTTP_BAD_REQUEST);
         }
         $playerId = $content["playerId"];
 
@@ -106,7 +105,7 @@ class GameController extends AbstractController
         $game = $entityManager->getRepository(Game::class)->find($id);
 
         if (!$game) {
-            return new Response("Game not found", 404);
+            return new JsonResponse("Game not found", JsonResponse::HTTP_NOT_FOUND);
         }
 
         // If game is not started yet, we waiting for players !
@@ -127,10 +126,9 @@ class GameController extends AbstractController
         }
         $this->notify($publisher, $game->getId(), ["status" => "join", "value" => null]);
 
-        $response = new Response(
+        $response = JsonResponse::fromJsonString(
             $this->serializer->serialize($game, 'json'),
-            Response::HTTP_OK,
-            ['Content-type' => 'application/json']
+            JsonResponse::HTTP_OK
         );
         return $response;
     }
@@ -138,19 +136,18 @@ class GameController extends AbstractController
    /**
      * @Route("/games/{id}", name="game_view", methods={"GET"})
      */
-    public function game(string $id): Response
+    public function game(string $id): JsonResponse
     {
         $entityManager = $this->getDoctrine()->getManager();
         $game = $entityManager->getRepository(Game::class)->find($id);
 
         if (!$game) {
-            return new Response("Game not found", 404);
+            return new JsonResponse("Game not found", JsonResponse::HTTP_NOT_FOUND);
         }
 
-        $response = new Response(
+        $response = JsonResponse::fromJsonString(
             $this->serializer->serialize($game, 'json'),
-            Response::HTTP_OK,
-            ['Content-type' => 'application/json']
+            JsonResponse::HTTP_OK,
         );
 
         return $response;
@@ -159,7 +156,7 @@ class GameController extends AbstractController
     /**
      * @Route("/games", name="games", methods={"GET"})
      */
-    public function games(): Response
+    public function games(): JsonResponse
     {
         $entityManager = $this->getDoctrine()->getManager();
         $games = $entityManager->getRepository(Game::class)->findBy(
@@ -167,10 +164,9 @@ class GameController extends AbstractController
             ['created' => 'DESC']
         );
         
-        $response = new Response(
+        $response = JsonResponse::fromJsonString(
             $this->serializer->serialize($games, 'json'),
-            Response::HTTP_OK,
-            ['Content-type' => 'application/json']
+            JsonResponse::HTTP_OK,
         );
 
         return $response;
@@ -181,7 +177,7 @@ class GameController extends AbstractController
      * Add a marble to the board
      */
 
-    public function addMarble(Request $request, string $id, PublisherInterface $publisher): Response
+    public function addMarble(Request $request, string $id, PublisherInterface $publisher): JsonResponse
     {
         $playerHash = $request->cookies->get($this::COOKIE_KEY);
 
