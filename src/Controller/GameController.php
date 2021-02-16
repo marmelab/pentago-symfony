@@ -217,7 +217,6 @@ class GameController extends AbstractController
             [
                 "status" => $this->gameService::ADD_MARBLE_STATUS,
                 "value" => ["position" => $position, "playerValue" => $currentPlayerValue],
-                "game" => $this->serializer->serialize($game, 'json')
             ]
         );
 
@@ -268,7 +267,6 @@ class GameController extends AbstractController
             [
                 "status" => $this->gameService::ROTATE_QUARTER_STATUS,
                 "value" => $rotation,
-                "game" => $this->serializer->serialize($game, 'json')
             ]
         );
 
