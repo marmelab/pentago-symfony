@@ -157,6 +157,26 @@ class GameController extends AbstractController
     }
 
     /**
+     * @Route("/games", name="games", methods={"GET"})
+     */
+    public function games(): Response
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $games = $entityManager->getRepository(Game::class)->findBy(
+            ['status' => $this->gameService::GAME_WAITING_OPPONENT],
+            ['created' => 'DESC']
+        );
+        
+        $response = new Response(
+            $this->serializer->serialize($games, 'json'),
+            Response::HTTP_OK,
+            ['Content-type' => 'application/json']
+        );
+
+        return $response;
+    }
+
+    /**
      * @Route("/games/{id}/addMarble", name="addMarble")
      * Add a marble to the board
      */
