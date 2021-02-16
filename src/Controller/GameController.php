@@ -124,7 +124,11 @@ class GameController extends AbstractController
             }
             $entityManager->flush();
         }
-        $this->notify($publisher, $game->getId(), ["status" => "join", "value" => null, "game" => $this->serializer->serialize($game, 'json')]);
+        $this->notify(
+            $publisher,
+            $game->getId(),
+            ["status" => "join", "value" => null]
+        );
 
         $response = JsonResponse::fromJsonString(
             $this->serializer->serialize($game, 'json'),
@@ -199,7 +203,6 @@ class GameController extends AbstractController
 
         if ($game->getTurnStatus() !== $this->gameService::ADD_MARBLE_STATUS) {
             return new JsonResponse("This is not the add_marble phase", JsonResponse::HTTP_BAD_REQUEST);
-            
         }
 
         $position = $content["position"];
