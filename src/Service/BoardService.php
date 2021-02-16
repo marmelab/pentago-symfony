@@ -55,9 +55,9 @@ class BoardService
         switch ($key) {
             case 1:
                 return array("startRow" => 0, "startColumn" => self::HALF_BOARD_LENGTH);
-            case 2:
-                return array("startRow" => self::HALF_BOARD_LENGTH, "startColumn" => self::HALF_BOARD_LENGTH);
             case 3:
+                return array("startRow" => self::HALF_BOARD_LENGTH, "startColumn" => self::HALF_BOARD_LENGTH);
+            case 2:
                 return array("startRow" => self::HALF_BOARD_LENGTH, "startColumn" => 0);
             case 0:
             default:

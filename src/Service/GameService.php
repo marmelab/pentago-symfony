@@ -55,30 +55,23 @@ class GameService
     }
 
     // From a player hash, get if it's player1, 2 or null
-    public function getPlayerValue(Game $game, ?string $playerHash): ?int
+    public function getCurrentPlayerValue(Game $game): ?int
     {
-        if ($game->getPlayer1Hash() === $playerHash) {
+        if ($game->getPlayer1() === $game->getCurrentPlayer()) {
             return 1;
         }
 
-        if ($game->getPlayer2Hash() === $playerHash) {
+        if ($game->getPlayer2() === $game->getCurrentPlayer()) {
             return 2;
         }
 
         return null;
     }
 
-    public function getCurrentPlayerValue(Game $game): int
-    {
-        return $this->getPlayerValue($game, $game->getCurrentPlayerHash());
-    }
-
     // End of turn, switch to the other player.
-    public function changeCurrentPlayerHash(Game $game): string
+    public function changeCurrentPlayer(Game $game): Player
     {
-        $currentPlayerValue = $this->getCurrentPlayerValue($game);
-
-        return $currentPlayerValue === 1 ? $game->getPlayer2Hash() : $game->getPlayer1Hash();
+        return $game->getCurrentPlayer() === $game->getPlayer1() ? $game->getPlayer2() : $game->getPlayer1();
     }
 
     public function addMarbleIfPositionIsValid(Game $game, array $position): Game
@@ -156,7 +149,7 @@ class GameService
         $game->setTurnStatus((self::ADD_MARBLE_STATUS));
 
         // Player has finished his turn
-        $game->setCurrentPlayerHash($this->changeCurrentPlayerHash($game));
+        $game->setCurrentPlayer($this->changeCurrentPlayer($game));
 
         // At this step we have also to check if game is finished.
         $game = $this->checkIfGameIsFinished($game);

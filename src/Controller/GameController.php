@@ -51,7 +51,7 @@ class GameController extends AbstractController
         // Create an Update object
         $update = new Update(
             $url,
-            json_encode(["status" => $params["status"], "value" => $params["value"]])
+            json_encode($params)
         );
 
         // The Publisher service is an invokable object
@@ -124,7 +124,7 @@ class GameController extends AbstractController
             }
             $entityManager->flush();
         }
-        $this->notify($publisher, $game->getId(), ["status" => "join", "value" => null]);
+        $this->notify($publisher, $game->getId(), ["status" => "join", "value" => null, "game" => $this->serializer->serialize($game, 'json')]);
 
         $response = JsonResponse::fromJsonString(
             $this->serializer->serialize($game, 'json'),
@@ -173,78 +173,89 @@ class GameController extends AbstractController
     }
 
     /**
-     * @Route("/games/{id}/addMarble", name="addMarble")
+     * @Route("/games/{id}/addMarble", name="addMarble", methods={"POST"})
      * Add a marble to the board
      */
 
     public function addMarble(Request $request, string $id, PublisherInterface $publisher): JsonResponse
     {
-        $playerHash = $request->cookies->get($this::COOKIE_KEY);
-
+        $content = $request->toArray();
+        if (!$content || !$content["playerId"] || !$content["position"]) {
+            return new JsonResponse("playerId and marble are required", JsonResponse::HTTP_BAD_REQUEST);
+        }
         $entityManager = $this->getDoctrine()->getManager();
         $game = $entityManager->getRepository(Game::class)->find($id);
 
-        if (!$playerHash || !$game) {
-            return $this->redirectToRoute('newGame');
+        if (!$game) {
+            return new JsonResponse("Game not found", JsonResponse::HTTP_NOT_FOUND);
         }
 
+        $playerId = $content["playerId"];
 
-        if ($game->getStatus() === $this->gameService::GAME_WAITING_OPPONENT ||
-            $game->getCurrentPlayerHash() !== $playerHash
-        ) {
-            return $this->redirectToRoute('game', ["id" => $game->getId()]);
+        // $playerId is a string, we need to convert uuid to the same string.
+        if ($playerId !== $game->getCurrentPlayer()->getId()->toRfc4122()) {
+            return new JsonResponse("This is not your turn", JsonResponse::HTTP_BAD_REQUEST);
         }
 
-        $requestPosition = $request->get('position');
+        if ($game->getTurnStatus() !== $this->gameService::ADD_MARBLE_STATUS) {
+            return new JsonResponse("This is not the add_marble phase", JsonResponse::HTTP_BAD_REQUEST);
+            
+        }
 
-        // Value are stored like "x-y".
-        $position = explode('-', $requestPosition);
-
-        // Using loop.index in twig make it start to 1 instead of 0.
-        // We need to remove 1 to each positions.
-        $position[0] -= 1;
-        $position[1] -= 1;
+        $position = $content["position"];
 
         $game = $this->gameService->addMarbleIfPositionIsValid($game, $position);
         $entityManager->flush();
-        $currentPlayerValue = $this->gameService->getPlayerValue($game, $playerHash);
+        $currentPlayerValue = $this->gameService->getCurrentPlayerValue($game);
+
         $this->notify(
             $publisher,
             $game->getId(),
             [
                 "status" => $this->gameService::ADD_MARBLE_STATUS,
-                "value" => ["position" => $requestPosition, "playerValue" => $currentPlayerValue]
+                "value" => ["position" => $position, "playerValue" => $currentPlayerValue],
+                "game" => $this->serializer->serialize($game, 'json')
             ]
         );
 
-        return $this->redirectToRoute('game', ["id" => $game->getId()]);
+        return JsonResponse::fromJsonString(
+            $this->serializer->serialize($game, 'json'),
+            JsonResponse::HTTP_OK,
+        );
     }
 
     /**
-     * @Route("/games/{id}/rotateQuarter", name="rotateQuarter")
+     * @Route("/games/{id}/rotateQuarter", name="rotateQuarter", methods={"POST"})
      * Add a marble to the board
      */
 
-    public function rotateQuarter(Request $request, string $id, PublisherInterface $publisher): Response
+    public function rotateQuarter(Request $request, string $id, PublisherInterface $publisher): JsonResponse
     {
-        $playerHash = $request->cookies->get($this::COOKIE_KEY);
-
+        $content = $request->toArray();
+        if (!$content || !$content["playerId"] || is_null($content["rotation"])) {
+            return new JsonResponse("playerId and rotation are required", JsonResponse::HTTP_BAD_REQUEST);
+        }
         $entityManager = $this->getDoctrine()->getManager();
         $game = $entityManager->getRepository(Game::class)->find($id);
 
-        if (!$playerHash || !$game) {
-            return $this->redirectToRoute('newGame');
+        if (!$game) {
+            return new JsonResponse("Game not found", JsonResponse::HTTP_NOT_FOUND);
         }
 
+        $playerId = $content["playerId"];
 
-        if ($game->getStatus() === $this->gameService::GAME_WAITING_OPPONENT) {
-            return $this->redirectToRoute('game', ["id" => $game->getId()]);
+        // $playerId is a string, we need to convert uuid to the same string.
+        if ($playerId !== $game->getCurrentPlayer()->getId()->toRfc4122()) {
+            return new JsonResponse("This is not your turn", JsonResponse::HTTP_BAD_REQUEST);
         }
 
+        if ($game->getTurnStatus() !== $this->gameService::ROTATE_QUARTER_STATUS) {
+            return new JsonResponse("This is not the rotation phase", JsonResponse::HTTP_BAD_REQUEST);
+        }
 
-        $rotationKey = $request->get('rotation-key');
+        $rotation = $content["rotation"];
 
-        $game = $this->gameService->rotateQuarterBy90Degrees($game, $rotationKey);
+        $game = $this->gameService->rotateQuarterBy90Degrees($game, $rotation);
 
         $entityManager->flush();
 
@@ -253,10 +264,14 @@ class GameController extends AbstractController
             $game->getId(),
             [
                 "status" => $this->gameService::ROTATE_QUARTER_STATUS,
-                "value" => $rotationKey
+                "value" => $rotation,
+                "game" => $this->serializer->serialize($game, 'json')
             ]
         );
 
-        return $this->redirectToRoute('game', ["id" => $game->getId()]);
+        return JsonResponse::fromJsonString(
+            $this->serializer->serialize($game, 'json'),
+            JsonResponse::HTTP_OK,
+        );
     }
 }
