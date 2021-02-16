@@ -16,7 +16,8 @@ use App\Repository\GameRepository;
 
 class PlayerController extends AbstractController
 {
-    public function __construct() {
+    public function __construct()
+    {
         $encoders = [new JsonEncoder()];
         $normalizers = [new UidNormalizer(), new ObjectNormalizer()];
 
