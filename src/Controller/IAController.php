@@ -62,9 +62,9 @@ class IAController extends AbstractController
         $content = $advice->toArray();
 
          $response = JsonResponse::fromJsonString(
-            $this->serializer->serialize($content, 'json'),
-            JsonResponse::HTTP_OK
-        );
+             $this->serializer->serialize($content, 'json'),
+             JsonResponse::HTTP_OK
+         );
         return $response;
     }
 }
