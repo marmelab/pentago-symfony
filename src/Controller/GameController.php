@@ -198,7 +198,7 @@ class GameController extends AbstractController
 
         // $playerId is a string, we need to convert uuid to the same string.
         if ($playerId !== $game->getCurrentPlayer()->getId()->toRfc4122()) {
-            return new JsonResponse("This is not your turn", JsonResponse::HTTP_BAD_REQUEST);
+            return new JsonResponse("This is not your turn", JsonResponse::HTTP_FORBIDDEN);
         }
 
         if ($game->getTurnStatus() !== $this->gameService::ADD_MARBLE_STATUS) {
@@ -248,7 +248,7 @@ class GameController extends AbstractController
 
         // $playerId is a string, we need to convert uuid to the same string.
         if ($playerId !== $game->getCurrentPlayer()->getId()->toRfc4122()) {
-            return new JsonResponse("This is not your turn", JsonResponse::HTTP_BAD_REQUEST);
+            return new JsonResponse("This is not your turn", JsonResponse::HTTP_FORBIDDEN);
         }
 
         if ($game->getTurnStatus() !== $this->gameService::ROTATE_QUARTER_STATUS) {
