@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mercure\PublisherInterface;
 use Symfony\Component\Mercure\Update;
@@ -19,9 +18,6 @@ use App\Entity\Game;
 use App\Entity\Player;
 use App\Service\GameService;
 use App\Service\PlayerService;
-use App\Service\MercureCookieService;
-
-use App\Dto\GameDto;
 
 class GameController extends AbstractController
 {
