@@ -57,7 +57,11 @@ class IAController extends AbstractController
                 ]
             ]
         );
+        $statusCode = $advice->getStatusCode();
 
+        if($statusCode > 399) {
+            return new JsonResponse("Advice service not available", $statusCode);
+        }
         // casts the response JSON content to a PHP array
         $content = $advice->toArray();
 
