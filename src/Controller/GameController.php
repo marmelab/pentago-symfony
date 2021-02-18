@@ -120,11 +120,11 @@ class GameController extends AbstractController
             }
             $entityManager->flush();
         }
-        $this->notify(
-            $publisher,
-            $game->getId(),
-            ["status" => "join", "value" => null]
-        );
+        // $this->notify(
+        //     $publisher,
+        //     $game->getId(),
+        //     ["status" => "join", "value" => null]
+        // );
 
         $response = JsonResponse::fromJsonString(
             $this->serializer->serialize($game, 'json'),
@@ -207,14 +207,14 @@ class GameController extends AbstractController
         $entityManager->flush();
         $currentPlayerValue = $this->gameService->getCurrentPlayerValue($game);
 
-        $this->notify(
-            $publisher,
-            $game->getId(),
-            [
-                "status" => $this->gameService::ADD_MARBLE_STATUS,
-                "value" => ["position" => $position, "playerValue" => $currentPlayerValue],
-            ]
-        );
+        // $this->notify(
+        //     $publisher,
+        //     $game->getId(),
+        //     [
+        //         "status" => $this->gameService::ADD_MARBLE_STATUS,
+        //         "value" => ["position" => $position, "playerValue" => $currentPlayerValue],
+        //     ]
+        // );
 
         return JsonResponse::fromJsonString(
             $this->serializer->serialize($game, 'json'),
@@ -257,14 +257,14 @@ class GameController extends AbstractController
 
         $entityManager->flush();
 
-        $this->notify(
-            $publisher,
-            $game->getId(),
-            [
-                "status" => $this->gameService::ROTATE_QUARTER_STATUS,
-                "value" => $rotation,
-            ]
-        );
+        // $this->notify(
+        //     $publisher,
+        //     $game->getId(),
+        //     [
+        //         "status" => $this->gameService::ROTATE_QUARTER_STATUS,
+        //         "value" => $rotation,
+        //     ]
+        // );
 
         return JsonResponse::fromJsonString(
             $this->serializer->serialize($game, 'json'),
