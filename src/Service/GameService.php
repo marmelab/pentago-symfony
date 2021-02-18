@@ -24,13 +24,21 @@ class GameService
         $this->winDetectionService = $winDetectionService;
     }
 
-    public function initGame(Player $player): Game
+    public function initGame(Player $player, $againstComputer): Game
     {
         $game = new Game();
         $game->setBoard($this->boardService->initBoard());
         $game->setTurnStatus(self::ADD_MARBLE_STATUS);
-        $game->setStatus(self::GAME_WAITING_OPPONENT);
         $game->setPlayer1($player);
+        $game->setAgainstComputer($againstComputer);
+
+        if (!$againstComputer) {
+            $game->setStatus(self::GAME_WAITING_OPPONENT);
+        } else {
+            $game->setCurrentPlayer($game->getPlayer1());
+            $game->setStatus(self::GAME_STARTED);
+        }
+        
 
         return $game;
     }
@@ -61,7 +69,7 @@ class GameService
             return 1;
         }
 
-        if ($game->getPlayer2() === $game->getCurrentPlayer()) {
+        if (!$game->getCurrentPlayer() || $game->getPlayer2() === $game->getCurrentPlayer()) {
             return 2;
         }
 
@@ -69,8 +77,12 @@ class GameService
     }
 
     // End of turn, switch to the other player.
-    public function changeCurrentPlayer(Game $game): Player
+    public function changeCurrentPlayer(Game $game): ?Player
     {
+        if ($game->getAgainstComputer()) {
+            return $game->getCurrentPlayer() === $game->getPlayer1() ? NULL : $game->getPlayer1();
+        }
+
         return $game->getCurrentPlayer() === $game->getPlayer1() ? $game->getPlayer2() : $game->getPlayer1();
     }
 
@@ -171,5 +183,20 @@ class GameService
         }
 
         return $game;
+    }
+
+    public function getRotationKeyFromIA($rotation): int {
+        switch(intval($rotation[0])) {
+            case 1:
+            default:
+                return $rotation[1] === "counter-clockwise" ? 0 : 1;
+            case 2:
+                return $rotation[1] === "counter-clockwise" ? 2 : 3;
+            case 3:
+                return $rotation[1] === "counter-clockwise" ? 4 : 5;
+            case 4:
+                return $rotation[1] === "counter-clockwise" ? 6 : 7;
+                
+        }
     }
 }

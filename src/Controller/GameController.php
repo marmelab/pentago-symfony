@@ -69,8 +69,9 @@ class GameController extends AbstractController
         $playerRepository = $this->getDoctrine()->getRepository(Player::class);
         $player = $playerRepository->find($playerId);
 
-        
-        $game = $this->gameService->initGame($player);
+        $againstComputer = $content["againstComputer"];
+
+        $game = $this->gameService->initGame($player, $againstComputer);
         
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($game);
@@ -120,11 +121,6 @@ class GameController extends AbstractController
             }
             $entityManager->flush();
         }
-        // $this->notify(
-        //     $publisher,
-        //     $game->getId(),
-        //     ["status" => "join", "value" => null]
-        // );
 
         $response = JsonResponse::fromJsonString(
             $this->serializer->serialize($game, 'json'),
@@ -205,16 +201,6 @@ class GameController extends AbstractController
 
         $game = $this->gameService->addMarbleIfPositionIsValid($game, $position);
         $entityManager->flush();
-        $currentPlayerValue = $this->gameService->getCurrentPlayerValue($game);
-
-        // $this->notify(
-        //     $publisher,
-        //     $game->getId(),
-        //     [
-        //         "status" => $this->gameService::ADD_MARBLE_STATUS,
-        //         "value" => ["position" => $position, "playerValue" => $currentPlayerValue],
-        //     ]
-        // );
 
         return JsonResponse::fromJsonString(
             $this->serializer->serialize($game, 'json'),
@@ -256,15 +242,6 @@ class GameController extends AbstractController
         $game = $this->gameService->rotateQuarterBy90Degrees($game, $rotation);
 
         $entityManager->flush();
-
-        // $this->notify(
-        //     $publisher,
-        //     $game->getId(),
-        //     [
-        //         "status" => $this->gameService::ROTATE_QUARTER_STATUS,
-        //         "value" => $rotation,
-        //     ]
-        // );
 
         return JsonResponse::fromJsonString(
             $this->serializer->serialize($game, 'json'),

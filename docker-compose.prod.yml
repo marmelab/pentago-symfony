@@ -12,9 +12,3 @@ services:
     depends_on:
       - symfony
 
-  go:
-    image: alpine
-    volumes:
-      - "./go:/app"
-    working_dir: /app
-    command: "./main"
