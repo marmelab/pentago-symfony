@@ -69,6 +69,11 @@ class Game
      */
     private $created;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $againstComputer;
+
     public function getId(): ?UuidV4
     {
         return $this->id;
@@ -173,5 +178,17 @@ class Game
     public function getCreated(): ?DateTime
     {
         return $this->created;
+    }
+
+    public function getAgainstComputer(): ?bool
+    {
+        return $this->againstComputer;
+    }
+
+    public function setAgainstComputer(?bool $againstComputer): self
+    {
+        $this->againstComputer = $againstComputer;
+
+        return $this;
     }
 }
