@@ -80,7 +80,7 @@ class GameService
     public function changeCurrentPlayer(Game $game): ?Player
     {
         if ($game->getAgainstComputer()) {
-            return $game->getCurrentPlayer() === $game->getPlayer1() ? NULL : $game->getPlayer1();
+            return $game->getCurrentPlayer() === $game->getPlayer1() ? null : $game->getPlayer1();
         }
 
         return $game->getCurrentPlayer() === $game->getPlayer1() ? $game->getPlayer2() : $game->getPlayer1();
@@ -185,8 +185,9 @@ class GameService
         return $game;
     }
 
-    public function getRotationKeyFromIA($rotation): int {
-        switch(intval($rotation[0])) {
+    public function getRotationKeyFromIA($rotation): int
+    {
+        switch (intval($rotation[0])) {
             case 1:
             default:
                 return $rotation[1] === "counter-clockwise" ? 0 : 1;
@@ -196,7 +197,6 @@ class GameService
                 return $rotation[1] === "counter-clockwise" ? 4 : 5;
             case 4:
                 return $rotation[1] === "counter-clockwise" ? 6 : 7;
-                
         }
     }
 }
